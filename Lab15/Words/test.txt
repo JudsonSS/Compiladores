@@ -1,0 +1,11 @@
+subs chuva colega papel cadeira caixa
+verb chove cai pula tem ser viu faz 
+prep de com da do por pela pelo num
+conj e mas logo como porque ou pois
+adv  aqui ali adiante embaixo perto longe
+adj  velho novo alto baixo seco molhado bonito
+pron eu tu ele ela eles elas mim ti o a os as
+
+eu cai da cadeira
+ele viu a chuva ontem
+chove chuva chove sem parar
