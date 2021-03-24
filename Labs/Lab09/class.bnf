@@ -1,0 +1,17 @@
+
+(* Escreva uma gramática para representar declarações 
+   de classes, como a do exemplo abaixo:
+   -------------------------------------
+
+   class Ponto
+   {
+   private:
+       int x;
+       int y;
+   public:
+       Ponto();
+   };
+   
+   ------------------------------------- *)
+
+program ::= 

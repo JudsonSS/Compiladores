@@ -1,0 +1,19 @@
+(* Remova a recursão à esquerda da 
+   gramática abaixo para a construção 
+   de um analisador sintático preditivo. 
+   ---------------------------------------
+
+   expr -> expr digi + 
+      | expr digi -
+      | expr digi *
+      | expr digi /
+      | digi
+
+   digi -> 0 
+      | 1
+      | ... 
+      | 9
+   
+   --------------------------------------- *)
+
+expr ::=  

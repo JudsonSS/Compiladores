@@ -1,0 +1,20 @@
+
+(* Mostre como representar a precedência 
+   entre operadores lógicos e relacionais.
+   ---------------------------------------
+
+   expr && expr
+   expr || expr
+   
+   !expr
+
+   expr > expr
+   expr >= expr
+   expr < expr
+   expr <= expr
+   expr != expr
+   expr == expr
+   
+   --------------------------------------- *)
+
+rel ::= 

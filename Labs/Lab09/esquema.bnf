@@ -1,0 +1,19 @@
+(* Construa um esquema de tradução para 
+   converter expressões aritméticas da 
+   notação pós-fixada para a infixada.
+   ---------------------------------------
+
+   expr -> expr digi + 
+      | expr digi -
+      | expr digi *
+      | expr digi /
+      | digi
+
+   digi -> 0 
+      | 1
+      | ... 
+      | 9
+   
+   --------------------------------------- *)
+
+expr ::=  
