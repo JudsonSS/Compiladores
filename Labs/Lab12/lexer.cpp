@@ -118,12 +118,12 @@ Token * Lexer::Scan()
 		// se o número é um ponto-flutuante
 		if (dot)
 		{
-			token = Token{Tag::FLOATING, ss.str()};
+			token = Token{Tag::NUM_FLOAT, ss.str()};
 			return &token;
 		}
 		else
 		{
-			token = Token{Tag::INTEGER, ss.str()};
+			token = Token{Tag::NUM_INT, ss.str()};
 			return &token;
 		}
 	}

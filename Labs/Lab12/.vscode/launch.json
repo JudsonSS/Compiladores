@@ -10,7 +10,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/Debug/tradutor",
-            "args": ["Testes/teste1.c"],
+            "args": ["Testes/teste2.prog"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

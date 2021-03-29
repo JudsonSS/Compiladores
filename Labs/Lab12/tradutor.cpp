@@ -11,7 +11,7 @@ ifstream fin;
 // programa pode receber nomes de arquivos
 int main(int argc, char **argv)
 {
-	if (argc == 2 && strcmp(argv[1], "--help"))
+	if (argc == 2)
 	{
 		fin.open(argv[1]);
 		if (!fin.is_open())
@@ -38,8 +38,8 @@ int main(int argc, char **argv)
 		// 	switch(t->tag)
 		// 	{
 		// 		case ID: cout << "<ID," << t->toString() << ">" << endl; break;
-		// 		case INTEGER: cout << "<INTEGER," << t->toString() << ">" << endl; break;
-		// 		case FLOATING: cout << "<FLOATING," << t->toString() << ">" << endl; break;
+		// 		case INT: cout << "<INT," << t->toString() << ">" << endl; break;
+		// 		case FLOAT: cout << "<FLOAT," << t->toString() << ">" << endl; break;
 		// 		case TYPE: cout << "<TYPE," << t->toString() << ">" << endl; break;
 		// 		case TRUE: cout << "<TRUE," << t->toString() << ">" << endl; break;
 		// 		case FALSE: cout << "<FALSE," << t->toString() << ">" << endl; break;
@@ -58,15 +58,5 @@ int main(int argc, char **argv)
 		// }
 
 		fin.close();
-	}
-	else
-	{
-		cout << "Uso: tradutor arquivo\n";
-		cout << "\nO arquivo deve ter o formato .exp, como no exemplo abaixo:\n\n";
-		cout << "expression\n";
-		cout << "{\n";
-		cout << "   declarações\n";
-		cout << "   instruções\n";
-		cout << "}\n\n";
 	}
 }

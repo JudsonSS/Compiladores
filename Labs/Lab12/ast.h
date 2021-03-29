@@ -1,133 +1,111 @@
 
-enum NodeType { UNKNOWN, STMT, EXPR, CONSTANT, IDENTIFIER, LOG, REL, ARI, UNARY, 
-                SEQ, ASSIGN, IF_STMT, WHILE_STMT, DOWHILE_STMT };
-
-class Node
+enum NodeType
 {
-private:
-    int type;
+    UNKNOWN,
+    STMT,
+    EXPR,
+    CONSTANT,
+    IDENTIFIER,
+    LOG,
+    REL,
+    ARI,
+    UNARY,
+    SEQ,
+    ASSIGN,
+    IF_STMT,
+    WHILE_STMT,
+    DOWHILE_STMT
+};
 
-public:
+struct Node
+{
+    int type;
     Node() : type(NodeType::UNKNOWN) {}
     Node(int t) : type(t) {}
 };
 
-class Stmt : public Node
+struct Statement : public Node
 {
-public:
-    Stmt() : Node(NodeType::STMT) {}
+    Statement() : Node(NodeType::STMT) {}
+    Statement(int type) : Node(type) {}
 };
 
-class Expr : public Node
+struct Expression : public Node
 {
-private:
-    Token * token = nullptr;
-
-public:
-    Expr(Token * t) : Node(NodeType::EXPR), token(t) {}
-    Expr(int type, Token * t) : Node(type), token(t) {}
-    ~Expr() { delete token; }
+    Token *token = nullptr;
+    Expression(Token *t) : Node(NodeType::EXPR), token(t) {}
+    Expression(int type, Token *t) : Node(type), token(t) {}
+    ~Expression() { delete token; }
 };
 
-class Constant : public Expr
+struct Constant : public Expression
 {
-public:
-    Constant(Token * t) : Expr(NodeType::CONSTANT, t) {}
+    Constant(Token *t) : Expression(NodeType::CONSTANT, t) {}
 };
 
-class Identifier : public Expr
+struct Identifier : public Expression
 {
-public:
-    Identifier(Token * t) : Expr(NodeType::IDENTIFIER, t) {}
+    Identifier(Token *t) : Expression(NodeType::IDENTIFIER, t) {}
 };
 
-class Logical : public Expr
+struct Logical : public Expression
 {
-private:
-    Expr * expr1;
-    Expr * expr2;
-    
-public:
-    Logical(Token * t, Expr * e1, Expr * e2) : Expr(NodeType::LOG, t), expr1(e1), expr2(e2) {}
+    Expression *expr1;
+    Expression *expr2;
+    Logical(Token *t, Expression *e1, Expression *e2) : Expression(NodeType::LOG, t), expr1(e1), expr2(e2) {}
 };
 
-class Relational : public Expr
+struct Relational : public Expression
 {
-private:
-    Expr * expr1;
-    Expr * expr2;
-
-public:
-    Relational(Token * t, Expr * e1, Expr * e2) : Expr(NodeType::REL, t), expr1(e1), expr2(e2) {}
+    Expression *expr1;
+    Expression *expr2;
+    Relational(Token *t, Expression *e1, Expression *e2) : Expression(NodeType::REL, t), expr1(e1), expr2(e2) {}
 };
 
-class Arithmetic : public Expr
+struct Arithmetic : public Expression
 {
-private:
-    Expr * expr1;
-    Expr * expr2;
-
-public:
-    Arithmetic(Token * t, Expr * e1, Expr * e2) : Expr(NodeType::ARI, t), expr1(e1), expr2(e2) {}
+    Expression *expr1;
+    Expression *expr2;
+    Arithmetic(Token *t, Expression *e1, Expression *e2) : Expression(NodeType::ARI, t), expr1(e1), expr2(e2) {}
 };
 
-class UnaryExpr : public Expr
+struct UnaryExpr : public Expression
 {
-public:
-    Expr * expr;
-
-public:
-    UnaryExpr(Token * t, Expr * e) : Expr(NodeType::UNARY, t), expr(e) {}
+    Expression *expr;
+    UnaryExpr(Token *t, Expression *e) : Expression(NodeType::UNARY, t), expr(e) {}
 };
 
-class Seq : public Stmt
+struct Seq : public Statement
 {
-private:
-    Stmt * stmt;
-    Stmt * stmts;
-
-public:
-    Seq(Stmt * s, Stmt * ss) {}
+    Statement *first;
+    Statement *others;
+    Seq(Statement *s, Statement *ss) : Statement(NodeType::SEQ), first(s), others(ss) {}
 };
 
-class Assign : public Stmt
+struct Assign : public Statement
 {
-private:
-    Token * id;
-    Expr * expr;
-
-public:
-    Assign(Token * i, Expr * e) { }
+    Token *id;
+    Expression *expr;
+    Assign(Token *i, Expression *e) : Statement(NodeType::ASSIGN), id(i), expr(e) {}
 };
 
-class If : public Stmt
+struct If : public Statement
 {
-private:
-    Expr * expr;
-    Stmt * stmt;
-
-public:
-    If(Expr * e, Stmt * s) { }
+    Expression *expr;
+    Statement *stmt;
+    If(Expression *e, Statement *s) : Statement(NodeType::IF_STMT), expr(e), stmt(s) {}
 };
 
-class While : public Stmt
+struct While : public Statement
 {
-private:
-    Expr * expr;
-    Stmt * stmt;
-
-public:
-    While(Expr * e, Stmt * s) { }
-    
+    Expression *expr;
+    Statement *stmt;
+    While(Expression *e, Statement *s) : Statement(NodeType::WHILE_STMT), expr(e), stmt(s) {}
 };
 
-class DoWhile : public Stmt
+struct DoWhile : public Statement
 {
-private:
-    Stmt * stmt;
-    Expr * expr;    
-
-public:
-    DoWhile(Stmt * s, Expr * e) { }
-    
+    Statement *stmt;
+    Expression *expr;
+    DoWhile(Statement *s, Expression *e) : Statement(NodeType::DOWHILE_STMT), stmt(s), expr(e) {}
 };
