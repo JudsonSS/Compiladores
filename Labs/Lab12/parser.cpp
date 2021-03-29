@@ -8,7 +8,7 @@ using std::cout;
 using std::endl;
 using std::stringstream;
 
-Statement * Parser::Program()
+Statement *Parser::Program()
 {
     // program -> main block
     if (!Match(Tag::MAIN))
@@ -16,7 +16,7 @@ Statement * Parser::Program()
     return Block();
 }
 
-Statement * Parser::Block()
+Statement *Parser::Block()
 {
     // block -> { decls stmts }
     if (!Match('{'))
@@ -111,7 +111,7 @@ Statement *Parser::Stmts()
     // stmts -> stmt stmts
     //        | empty
 
-    Statement * seq = nullptr;
+    Statement *seq = nullptr;
 
     switch (lookahead->tag)
     {
@@ -122,8 +122,8 @@ Statement *Parser::Stmts()
     case Tag::DO:
     case '{':
     {
-        Statement * st = Stmt();
-        Statement * sts = Stmts();
+        Statement *st = Stmt();
+        Statement *sts = Stmts();
         seq = new Seq(st, sts);
     }
     }
@@ -650,5 +650,108 @@ Parser::Parser()
 
 void Parser::Start()
 {
-    Statement * tree = Program();
+    Statement *tree = Program();
+    Traverse(tree);
+    cout << endl;
+}
+
+void Parser::Traverse(Node *n)
+{
+    if (n)
+    {
+        switch (n->type)
+        {
+        case SEQ:
+        {
+            Seq * s = (Seq*) n;
+            cout << "<SEQ>(";
+            Traverse(s->first);
+            cout << ",";
+            Traverse(s->others);
+            cout << ")";
+            break;
+        }
+        case ASSIGN:
+        {
+            Assign * a = (Assign*) n;
+            cout << "<ASSIGN>(";
+            cout << a->id->toString() << "=";
+            Traverse(a->expr);
+            cout << ")";
+            break;
+        }
+        case REL:
+        {
+            Relational * r = (Relational*) n;
+            cout << "<REL>(";
+            Traverse(r->expr1);
+            cout << " " << r->token->toString() << " ";
+            Traverse(r->expr2);
+            cout << ")";
+            break;
+        }
+        case LOG:
+        {
+            Logical * l = (Logical*) n;
+            cout << "<LOG>(";
+            Traverse(l->expr1);
+            cout << " " << l->token->toString() << " ";
+            Traverse(l->expr2);
+            cout << ")";
+            break;
+        }
+        case ARI:
+        {
+            Arithmetic * a = (Arithmetic*) n;
+            cout << "<ARI>(";
+            Traverse(a->expr1);
+            cout << " " << a->token->toString() << " ";
+            Traverse(a->expr2);
+            cout << ")";
+            break;
+        }
+        case CONSTANT:
+        {
+            Constant * c = (Constant*) n;
+            cout << c->token->toString();
+            break;
+        }
+        case IDENTIFIER:
+        {
+            Identifier * i = (Identifier*) n;
+            cout << i->token->toString();
+            break;
+        }
+        case IF_STMT:
+        {
+            If * i = (If*) n;
+            cout << "<IF>(";
+            Traverse(i->expr);
+            cout << ",";
+            Traverse(i->stmt);
+            cout << ")";
+            break;
+        }
+        case WHILE_STMT:
+        {
+            While * w = (While*) n;
+            cout << "<WHILE>(";
+            Traverse(w->expr);
+            cout << ",";
+            Traverse(w->stmt);
+            cout << ")";
+            break;
+        }
+        case DOWHILE_STMT:
+        {
+            DoWhile * dw = (DoWhile*) n;
+            cout << "<DOWHILE>(";
+            Traverse(dw->stmt);
+            cout << ",";
+            Traverse(dw->expr);
+            cout << ")";
+            break;
+        }
+        }
+    }
 }

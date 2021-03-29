@@ -25,6 +25,7 @@ private:
 	Expression * Unary();
 	Expression * Factor();
 	bool Match(int tag);
+	void Traverse(Node * n);
 
 public:
 	Parser();
