@@ -113,7 +113,7 @@ Token * Lexer::Scan()
 			ss << peek;
 			peek = fin.get();
 		} 
-		while (isdigit(peek));
+		while (isdigit(peek) || peek == '.');
 
 		// se o número é um ponto-flutuante
 		if (dot)

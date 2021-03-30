@@ -9,7 +9,7 @@ private:
 	SymTable * symtable;
 	Token * lookahead;
 	
-	Statement * Program();
+	Node * Program();
 	Statement * Block();
 	void Decls();
 	void Decl();

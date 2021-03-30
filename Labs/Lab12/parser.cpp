@@ -8,11 +8,21 @@ using std::cout;
 using std::endl;
 using std::stringstream;
 
-Statement *Parser::Program()
+Node *Parser::Program()
 {
-    // program -> main block
+    // program -> int main() block
+    if (!Match(Tag::TYPE))
+        throw SyntaxError(scanner.Lineno(), "\'int\' esperado");
+    
     if (!Match(Tag::MAIN))
         throw SyntaxError(scanner.Lineno(), "\'main\' esperado");
+
+    if (!Match('('))
+        throw SyntaxError(scanner.Lineno(), "\'(\' esperado");
+
+    if (!Match(')'))
+        throw SyntaxError(scanner.Lineno(), "\')\' esperado");
+
     return Block();
 }
 
@@ -22,6 +32,7 @@ Statement *Parser::Block()
     if (!Match('{'))
         throw SyntaxError(scanner.Lineno(), "\'{\' esperado");
 
+    // ------------------------------------
     // nova tabela de símbolos para o bloco
     // ------------------------------------
     SymTable *saved = symtable;
@@ -34,6 +45,7 @@ Statement *Parser::Block()
     if (!Match('}'))
         throw SyntaxError(scanner.Lineno(), "\'}\' esperado");
 
+    // ------------------------------------------------------
     // tabela do escopo envolvente volta a ser a tabela ativa
     // ------------------------------------------------------
     delete symtable;
@@ -52,7 +64,7 @@ void Parser::Decls()
     while (lookahead->tag == Tag::TYPE)
     {
         // captura nome do tipo
-        string type{lookahead->toString()};
+        string type{lookahead->ToString()};
         Match(Tag::TYPE);
 
         // verifica se é um tipo válido
@@ -64,7 +76,7 @@ void Parser::Decls()
         }
 
         // captura nome do identificador
-        string name{lookahead->toString()};
+        string name{lookahead->ToString()};
         Match(Tag::ID);
 
         // cria símbolo
@@ -91,7 +103,7 @@ void Parser::Decls()
             if (!Match(']'))
             {
                 stringstream ss;
-                ss << "esperado ] no lugar de  \'" << lookahead->toString() << "\'";
+                ss << "esperado ] no lugar de  \'" << lookahead->ToString() << "\'";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
         }
@@ -100,7 +112,7 @@ void Parser::Decls()
         if (!Match(';'))
         {
             stringstream ss;
-            ss << "encontrado \'" << lookahead->toString() << "\' no lugar de ';'";
+            ss << "encontrado \'" << lookahead->ToString() << "\' no lugar de ';'";
             throw SyntaxError{scanner.Lineno(), "esperado ;"};
         }
     }
@@ -151,17 +163,16 @@ Statement *Parser::Stmt()
         if (!Match('='))
         {
             stringstream ss;
-            ss << "esperado = no lugar de  \'" << lookahead->toString() << "\'";
+            ss << "esperado = no lugar de  \'" << lookahead->ToString() << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         Expression *right = Bool();
         if (!Match(';'))
         {
             stringstream ss;
-            ss << "esperado ; no lugar de  \'" << lookahead->toString() << "\'";
+            ss << "esperado ; no lugar de  \'" << lookahead->ToString() << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
-        // sai da função Stmt()
         stmt = new Assign(left->token, right);
         return stmt;
     }
@@ -173,19 +184,17 @@ Statement *Parser::Stmt()
         if (!Match('('))
         {
             stringstream ss;
-            ss << "esperado ( no lugar de  \'" << lookahead->toString() << "\'";
+            ss << "esperado ( no lugar de  \'" << lookahead->ToString() << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         Expression *cond = Bool();
         if (!Match(')'))
         {
             stringstream ss;
-            ss << "esperado ) no lugar de  \'" << lookahead->toString() << "\'";
+            ss << "esperado ) no lugar de  \'" << lookahead->ToString() << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         Statement *inst = Stmt();
-
-        // sai da função Stmt()
         stmt = new If(cond, inst);
         return stmt;
     }
@@ -197,19 +206,17 @@ Statement *Parser::Stmt()
         if (!Match('('))
         {
             stringstream ss;
-            ss << "esperado ( no lugar de  \'" << lookahead->toString() << "\'";
+            ss << "esperado ( no lugar de  \'" << lookahead->ToString() << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         Expression *cond = Bool();
         if (!Match(')'))
         {
             stringstream ss;
-            ss << "esperado ) no lugar de  \'" << lookahead->toString() << "\'";
+            ss << "esperado ) no lugar de  \'" << lookahead->ToString() << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         Statement *inst = Stmt();
-
-        // sai da função Stmt()
         stmt = new While(cond, inst);
         return stmt;
     }
@@ -222,30 +229,28 @@ Statement *Parser::Stmt()
         if (!Match(Tag::WHILE))
         {
             stringstream ss;
-            ss << "esperado \'while\' no lugar de  \'" << lookahead->toString() << "\'";
+            ss << "esperado \'while\' no lugar de  \'" << lookahead->ToString() << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         if (!Match('('))
         {
             stringstream ss;
-            ss << "esperado ( no lugar de  \'" << lookahead->toString() << "\'";
+            ss << "esperado ( no lugar de  \'" << lookahead->ToString() << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         Expression *cond = Bool();
         if (!Match(')'))
         {
             stringstream ss;
-            ss << "esperado ) no lugar de  \'" << lookahead->toString() << "\'";
+            ss << "esperado ) no lugar de  \'" << lookahead->ToString() << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         if (!Match(';'))
         {
             stringstream ss;
-            ss << "esperado ; no lugar de  \'" << lookahead->toString() << "\'";
+            ss << "esperado ; no lugar de  \'" << lookahead->ToString() << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
-
-        // sai da função Stmt()
         stmt = new DoWhile(inst, cond);
         return stmt;
     }
@@ -258,7 +263,7 @@ Statement *Parser::Stmt()
     default:
     {
         stringstream ss;
-        ss << "\'" << lookahead->toString() << "\' não inicia uma instrução válida";
+        ss << "\'" << lookahead->ToString() << "\' não inicia uma instrução válida";
         throw SyntaxError{scanner.Lineno(), ss.str()};
     }
     }
@@ -276,15 +281,15 @@ Expression *Parser::Local()
     case Tag::ID:
     {
         // verifica tipo da variável na tabela de símbolos
-        Symbol *s = symtable->Find(lookahead->toString());
+        Symbol *s = symtable->Find(lookahead->ToString());
         if (!s)
         {
             stringstream ss;
-            ss << "variável \"" << lookahead->toString() << "\" não declarada";
+            ss << "variável \"" << lookahead->ToString() << "\" não declarada";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
 
-        expr = new Identifier(new Token{*lookahead});
+        expr = new Identifier(s->type == "int" ? ExprType::INT : ExprType::FLOAT, new Token{*lookahead});
         Match(Tag::ID);
 
         if (Match('['))
@@ -293,7 +298,7 @@ Expression *Parser::Local()
             if (!Match(']'))
             {
                 stringstream ss;
-                ss << "esperado ] no lugar de  \'" << lookahead->toString() << "\'";
+                ss << "esperado ] no lugar de  \'" << lookahead->ToString() << "\'";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
         }
@@ -316,7 +321,7 @@ Expression *Parser::Bool()
     // lor  -> || join lor
     //       | empty
 
-    Expression *expr = Join();
+    Expression * expr1 = Join();
 
     // função Lor()
     while (true)
@@ -325,8 +330,24 @@ Expression *Parser::Bool()
 
         if (Match(Tag::OR))
         {
-            Expression *expr2 = Join();
-            expr = new Logical(new Token{t}, expr, expr2);
+            Expression * expr2 = Join();
+
+            // -----------------------------------------
+            // Verificação de Tipos
+            // -----------------------------------------
+            if (expr1->type != ExprType::BOOL || expr2->type != ExprType::BOOL)
+            {
+                stringstream ss;
+                ss << "\'||\' usado com operandos não booleanos ("
+                   << expr1->token->ToString()
+                   << ":" << expr1->TypeName() << ") ("
+                   << expr2->token->ToString()
+                   << ":" << expr2->TypeName() << ") ";
+                throw SyntaxError{scanner.Lineno(), ss.str()};
+            }
+            // -----------------------------------------
+
+            expr1 = new Logical(new Token{t}, expr1, expr2);
         }
         else
         {
@@ -335,7 +356,7 @@ Expression *Parser::Bool()
         }
     }
 
-    return expr;
+    return expr1;
 }
 
 Expression *Parser::Join()
@@ -344,7 +365,7 @@ Expression *Parser::Join()
     // land -> && equality land
     //       | empty
 
-    Expression *expr = Equality();
+    Expression *expr1 = Equality();
 
     // função Land()
     while (true)
@@ -353,7 +374,23 @@ Expression *Parser::Join()
         if (Match(Tag::AND))
         {
             Expression *expr2 = Equality();
-            expr = new Logical(new Token{t}, expr, expr2);
+
+            // -----------------------------------------
+            // Verificação de Tipos
+            // -----------------------------------------
+            if (expr1->type != ExprType::BOOL || expr2->type != ExprType::BOOL)
+            {
+                stringstream ss;
+                ss << "\'&&\' usado com operandos não booleanos ("
+                   << expr1->token->ToString()
+                   << ":" << expr1->TypeName() << ") ("
+                   << expr2->token->ToString()
+                   << ":" << expr2->TypeName() << ") ";
+                throw SyntaxError{scanner.Lineno(), ss.str()};
+            }
+            // -----------------------------------------
+
+            expr1 = new Logical(new Token{t}, expr1, expr2);
         }
         else
         {
@@ -362,7 +399,7 @@ Expression *Parser::Join()
         }
     }
 
-    return expr;
+    return expr1;
 }
 
 Expression *Parser::Equality()
@@ -372,7 +409,7 @@ Expression *Parser::Equality()
     //           | != rel eqdif
     //           | empty
 
-    Expression *expr = Rel();
+    Expression *expr1 = Rel();
 
     // função Eqdif()
     while (true)
@@ -383,13 +420,45 @@ Expression *Parser::Equality()
         {
             Match(Tag::EQ);
             Expression *expr2 = Rel();
-            expr = new Relational(new Token{t}, expr, expr2);
+
+            // -----------------------------------------
+            // Verificação de Tipos
+            // -----------------------------------------
+            if (expr1->type != expr2->type)
+            {
+                stringstream ss;
+                ss << "\'==\' usado com operandos de tipos diferentes ("
+                   << expr1->token->ToString()
+                   << ":" << expr1->TypeName() << ") ("
+                   << expr2->token->ToString()
+                   << ":" << expr2->TypeName() << ") ";
+                throw SyntaxError{scanner.Lineno(), ss.str()};
+            }
+            // -----------------------------------------
+
+            expr1 = new Relational(new Token{t}, expr1, expr2);
         }
         else if (lookahead->tag == Tag::NEQ)
         {
             Match(Tag::NEQ);
             Expression *expr2 = Rel();
-            expr = new Relational(new Token{t}, expr, expr2);
+
+            // -----------------------------------------
+            // Verificação de Tipos
+            // -----------------------------------------
+            if (expr1->type != expr2->type)
+            {
+                stringstream ss;
+                ss << "\'!=\' usado com operandos de tipos diferentes ("
+                   << expr1->token->ToString()
+                   << ":" << expr1->TypeName() << ") ("
+                   << expr2->token->ToString()
+                   << ":" << expr2->TypeName() << ") ";
+                throw SyntaxError{scanner.Lineno(), ss.str()};
+            }
+            // -----------------------------------------
+
+            expr1 = new Relational(new Token{t}, expr1, expr2);
         }
         else
         {
@@ -398,7 +467,7 @@ Expression *Parser::Equality()
         }
     }
 
-    return expr;
+    return expr1;
 }
 
 Expression *Parser::Rel()
@@ -410,7 +479,7 @@ Expression *Parser::Rel()
     //       | >= ari comp
     //       | empty
 
-    Expression *expr = Ari();
+    Expression *expr1 = Ari();
 
     // função Comp()
     while (true)
@@ -421,25 +490,89 @@ Expression *Parser::Rel()
         {
             Match('<');
             Expression *expr2 = Ari();
-            expr = new Relational(new Token{t}, expr, expr2);
+
+            // -----------------------------------------
+            // Verificação de Tipos
+            // -----------------------------------------
+            if (expr1->type != expr2->type)
+            {
+                stringstream ss;
+                ss << "\'<\' usado com operandos de tipos diferentes ("
+                   << expr1->token->ToString()
+                   << ":" << expr1->TypeName() << ") ("
+                   << expr2->token->ToString()
+                   << ":" << expr2->TypeName() << ") ";
+                throw SyntaxError{scanner.Lineno(), ss.str()};
+            }
+            // -----------------------------------------
+
+            expr1 = new Relational(new Token{t}, expr1, expr2);
         }
         else if (lookahead->tag == Tag::LTE)
         {
             Match(Tag::LTE);
             Expression *expr2 = Ari();
-            expr = new Relational(new Token{t}, expr, expr2);
+
+            // -----------------------------------------
+            // Verificação de Tipos
+            // -----------------------------------------
+            if (expr1->type != expr2->type)
+            {
+                stringstream ss;
+                ss << "\'<=\' usado com operandos de tipos diferentes ("
+                   << expr1->token->ToString()
+                   << ":" << expr1->TypeName() << ") ("
+                   << expr2->token->ToString()
+                   << ":" << expr2->TypeName() << ") ";
+                throw SyntaxError{scanner.Lineno(), ss.str()};
+            }
+            // -----------------------------------------
+
+            expr1 = new Relational(new Token{t}, expr1, expr2);
         }
         else if (lookahead->tag == '>')
         {
             Match('>');
             Expression *expr2 = Ari();
-            expr = new Relational(new Token{t}, expr, expr2);
+
+            // -----------------------------------------
+            // Verificação de Tipos
+            // -----------------------------------------
+            if (expr1->type != expr2->type)
+            {
+                stringstream ss;
+                ss << "\'>\' usado com operandos de tipos diferentes ("
+                   << expr1->token->ToString()
+                   << ":" << expr1->TypeName() << ") ("
+                   << expr2->token->ToString()
+                   << ":" << expr2->TypeName() << ") ";
+                throw SyntaxError{scanner.Lineno(), ss.str()};
+            }
+            // -----------------------------------------
+
+            expr1 = new Relational(new Token{t}, expr1, expr2);
         }
         else if (lookahead->tag == Tag::GTE)
         {
             Match(Tag::GTE);
             Expression *expr2 = Ari();
-            expr = new Relational(new Token{t}, expr, expr2);
+
+            // -----------------------------------------
+            // Verificação de Tipos
+            // -----------------------------------------
+            if (expr1->type != expr2->type)
+            {
+                stringstream ss;
+                ss << "\'>=\' usado com operandos de tipos diferentes ("
+                   << expr1->token->ToString()
+                   << ":" << expr1->TypeName() << ") ("
+                   << expr2->token->ToString()
+                   << ":" << expr2->TypeName() << ") ";
+                throw SyntaxError{scanner.Lineno(), ss.str()};
+            }
+            // -----------------------------------------
+
+            expr1 = new Relational(new Token{t}, expr1, expr2);
         }
         else
         {
@@ -448,7 +581,7 @@ Expression *Parser::Rel()
         }
     }
 
-    return expr;
+    return expr1;
 }
 
 Expression *Parser::Ari()
@@ -458,7 +591,7 @@ Expression *Parser::Ari()
     //       | - term oper
     //       | empty
 
-    Expression *expr = Term();
+    Expression *expr1 = Term();
 
     // função Oper()
     while (true)
@@ -470,21 +603,53 @@ Expression *Parser::Ari()
         {
             Match('+');
             Expression *expr2 = Term();
-            expr = new Arithmetic(new Token{t}, expr, expr2);
+
+            // -----------------------------------------
+            // Verificação de Tipos
+            // -----------------------------------------
+            if (expr1->type != expr2->type)
+            {
+                stringstream ss;
+                ss << "\'+\' usado com operandos de tipos diferentes ("
+                   << expr1->token->ToString()
+                   << ":" << expr1->TypeName() << ") ("
+                   << expr2->token->ToString()
+                   << ":" << expr2->TypeName() << ") ";
+                throw SyntaxError{scanner.Lineno(), ss.str()};
+            }
+            // -----------------------------------------
+
+            expr1 = new Arithmetic(expr1->type, new Token{t}, expr1, expr2);
         }
         // oper -> - term oper
         else if (lookahead->tag == '-')
         {
             Match('-');
             Expression *expr2 = Term();
-            expr = new Arithmetic(new Token{t}, expr, expr2);
+
+            // -----------------------------------------
+            // Verificação de Tipos
+            // -----------------------------------------
+            if (expr1->type != expr2->type)
+            {
+                stringstream ss;
+                ss << "\'-\' usado com operandos de tipos diferentes ("
+                   << expr1->token->ToString()
+                   << ":" << expr1->TypeName() << ") ("
+                   << expr2->token->ToString()
+                   << ":" << expr2->TypeName() << ") ";
+                throw SyntaxError{scanner.Lineno(), ss.str()};
+            }
+            // -----------------------------------------
+
+            expr1 = new Arithmetic(expr1->type, new Token{t}, expr1, expr2);
         }
         // oper -> empty
         else
             break;
     }
 
-    return expr;
+    return expr1;
 }
 
 Expression *Parser::Term()
@@ -494,7 +659,7 @@ Expression *Parser::Term()
     //       | / unary calc
     //       | empty
 
-    Expression *expr = Unary();
+    Expression *expr1 = Unary();
 
     // função Calc()
     while (true)
@@ -506,21 +671,53 @@ Expression *Parser::Term()
         {
             Match('*');
             Expression *expr2 = Unary();
-            expr = new Arithmetic(new Token{t}, expr, expr2);
+
+            // -----------------------------------------
+            // Verificação de Tipos
+            // -----------------------------------------
+            if (expr1->type != expr2->type)
+            {
+                stringstream ss;
+                ss << "\'*\' usado com operandos de tipos diferentes ("
+                   << expr1->token->ToString()
+                   << ":" << expr1->TypeName() << ") ("
+                   << expr2->token->ToString()
+                   << ":" << expr2->TypeName() << ") ";
+                throw SyntaxError{scanner.Lineno(), ss.str()};
+            }
+            // -----------------------------------------
+
+            expr1 = new Arithmetic(expr1->type, new Token{t}, expr1, expr2);
         }
         // calc -> / unary calc
         else if (lookahead->tag == '/')
         {
             Match('/');
             Expression *expr2 = Unary();
-            expr = new Arithmetic(new Token{t}, expr, expr2);
+
+            // -----------------------------------------
+            // Verificação de Tipos
+            // -----------------------------------------
+            if (expr1->type != expr2->type)
+            {
+                stringstream ss;
+                ss << "\'-\' usado com operandos de tipos diferentes ("
+                   << expr1->token->ToString()
+                   << ":" << expr1->TypeName() << ") ("
+                   << expr2->token->ToString()
+                   << ":" << expr2->TypeName() << ") ";
+                throw SyntaxError{scanner.Lineno(), ss.str()};
+            }
+            // -----------------------------------------
+
+            expr1 = new Arithmetic(expr1->type, new Token{t}, expr1, expr2);
         }
         // calc -> empty
         else
             break;
     }
 
-    return expr;
+    return expr1;
 }
 
 Expression *Parser::Unary()
@@ -536,14 +733,44 @@ Expression *Parser::Unary()
     {
         Token t = *lookahead;
         Match('!');
-        unary = new UnaryExpr(new Token{t}, Unary());
+        Expression * expr = Unary();
+
+        // -----------------------------------------
+        // Verificação de Tipos
+        // -----------------------------------------
+        if (expr->type != ExprType::BOOL)
+        {
+            stringstream ss;
+            ss << "\'!\' usado com operando não booleano ("
+                << expr->token->ToString()
+                << ":" << expr->TypeName() << ")";
+            throw SyntaxError{scanner.Lineno(), ss.str()};
+        }
+        // -----------------------------------------
+        
+        unary = new UnaryExpr(ExprType::BOOL, new Token{t}, expr);
     }
     // unary -> -unary
     else if (lookahead->tag == '-')
     {
         Token t = *lookahead;
         Match('-');
-        unary = new UnaryExpr(new Token{t}, Unary());
+        Expression * expr = Unary();
+
+        // -----------------------------------------
+        // Verificação de Tipos
+        // -----------------------------------------
+        if (expr->type != ExprType::INT && expr->type != ExprType::FLOAT)
+        {
+            stringstream ss;
+            ss << "\'-unário\' usado com operando não numérico ("
+                << expr->token->ToString()
+                << ":" << expr->TypeName() << ")";
+            throw SyntaxError{scanner.Lineno(), ss.str()};
+        }
+        // -----------------------------------------
+
+        unary = new UnaryExpr(expr->type, new Token{t}, expr);
     }
     else
     {
@@ -574,7 +801,7 @@ Expression *Parser::Factor()
         if (!Match(')'))
         {
             stringstream ss;
-            ss << "esperado ) no lugar de  \'" << lookahead->toString() << "\'";
+            ss << "esperado ) no lugar de  \'" << lookahead->ToString() << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         break;
@@ -590,7 +817,7 @@ Expression *Parser::Factor()
     // factor -> integer
     case Tag::NUM_INT:
     {
-        expr = new Constant(new Token{*lookahead});
+        expr = new Constant(ExprType::INT, new Token{*lookahead});
         Match(Tag::NUM_INT);
         break;
     }
@@ -598,7 +825,7 @@ Expression *Parser::Factor()
     // factor -> floating
     case Tag::NUM_FLOAT:
     {
-        expr = new Constant(new Token{*lookahead});
+        expr = new Constant(ExprType::FLOAT, new Token{*lookahead});
         Match(Tag::NUM_FLOAT);
         break;
     }
@@ -606,7 +833,7 @@ Expression *Parser::Factor()
     // factor -> true
     case Tag::TRUE:
     {
-        expr = new Constant(new Token{*lookahead});
+        expr = new Constant(ExprType::BOOL, new Token{*lookahead});
         Match(Tag::TRUE);
         break;
     }
@@ -614,7 +841,7 @@ Expression *Parser::Factor()
     // factor -> false
     case Tag::FALSE:
     {
-        expr = new Constant(new Token{*lookahead});
+        expr = new Constant(ExprType::BOOL, new Token{*lookahead});
         Match(Tag::FALSE);
         break;
     }
@@ -622,7 +849,7 @@ Expression *Parser::Factor()
     default:
     {
         stringstream ss;
-        ss << "uma expressão é esperada no lugar de  \'" << lookahead->toString() << "\'";
+        ss << "uma expressão é esperada no lugar de  \'" << lookahead->ToString() << "\'";
         throw SyntaxError{scanner.Lineno(), ss.str()};
         break;
     }
@@ -650,108 +877,128 @@ Parser::Parser()
 
 void Parser::Start()
 {
-    Statement *tree = Program();
-    Traverse(tree);
+    Traverse(Program());
     cout << endl;
+}
+
+void Pad(int n)
+{
+    for (int i=0; i < n; ++i)
+        cout << ' ';
 }
 
 void Parser::Traverse(Node *n)
 {
+    static int padding = 0;
+
     if (n)
     {
-        switch (n->type)
+        switch (n->node_type)
         {
         case SEQ:
         {
-            Seq * s = (Seq*) n;
-            cout << "<SEQ>(";
-            Traverse(s->first);
-            cout << ",";
-            Traverse(s->others);
-            cout << ")";
+            Seq *s = (Seq *)n;
+            Pad(padding); cout << "<SEQ>\n";
+            padding += 2;
+            Traverse(s->stmt);
+            Traverse(s->stmts);
+            padding -= 2;
+            Pad(padding); cout << "</SEQ>\n";
             break;
         }
         case ASSIGN:
         {
-            Assign * a = (Assign*) n;
-            cout << "<ASSIGN>(";
-            cout << a->id->toString() << "=";
+            Assign *a = (Assign *)n;
+            Pad(padding); cout << "<ASSIGN>\n";
+            padding += 2;
+            Pad(padding); cout << a->id->ToString() << endl;
             Traverse(a->expr);
-            cout << ")";
+            padding -= 2;
+            Pad(padding); cout << "</ASSIGN>\n";
             break;
         }
         case REL:
         {
-            Relational * r = (Relational*) n;
-            cout << "<REL>(";
+            Relational *r = (Relational *)n;
+            Pad(padding); cout << "<REL>\n";
+            padding += 2;
             Traverse(r->expr1);
-            cout << " " << r->token->toString() << " ";
+            Pad(padding); cout << r->token->ToString() << endl;
             Traverse(r->expr2);
-            cout << ")";
+            padding -= 2;
+            Pad(padding); cout << "</REL>\n";
             break;
         }
         case LOG:
         {
-            Logical * l = (Logical*) n;
-            cout << "<LOG>(";
-            Traverse(l->expr1);
-            cout << " " << l->token->toString() << " ";
-            Traverse(l->expr2);
-            cout << ")";
+            Logical *l = (Logical *)n;
+            Pad(padding); cout << "<LOG>\n";
+            padding += 2;
+            Traverse(l->expr1); 
+            Pad(padding); cout << l->token->ToString() << endl;
+            Traverse(l->expr2); 
+            padding -= 2;
+            Pad(padding); cout << "</LOG>\n";
             break;
         }
         case ARI:
         {
-            Arithmetic * a = (Arithmetic*) n;
-            cout << "<ARI>(";
-            Traverse(a->expr1);
-            cout << " " << a->token->toString() << " ";
-            Traverse(a->expr2);
-            cout << ")";
+            Arithmetic *a = (Arithmetic *)n;
+            Pad(padding); cout << "<ARI>\n";
+            padding += 2;
+            Traverse(a->expr1); 
+            Pad(padding); cout << a->token->ToString() << endl;
+            Traverse(a->expr2); 
+            padding -= 2;
+            Pad(padding); cout << "</ARI>\n";
             break;
         }
         case CONSTANT:
         {
-            Constant * c = (Constant*) n;
-            cout << c->token->toString();
+            Constant *c = (Constant *)n;
+            Pad(padding); cout << c->token->ToString() << endl;
             break;
         }
         case IDENTIFIER:
         {
-            Identifier * i = (Identifier*) n;
-            cout << i->token->toString();
+            Identifier *i = (Identifier *)n;
+            Pad(padding); cout << i->token->ToString() << endl;
             break;
         }
         case IF_STMT:
         {
-            If * i = (If*) n;
-            cout << "<IF>(";
+            If *i = (If *)n;
+            Pad(padding); cout << "<IF>\n";
+            padding += 2;
             Traverse(i->expr);
-            cout << ",";
             Traverse(i->stmt);
-            cout << ")";
+            padding -= 2;
             break;
         }
         case WHILE_STMT:
         {
-            While * w = (While*) n;
-            cout << "<WHILE>(";
+            While *w = (While *)n;
+            Pad(padding);cout << "<WHILE>\n";
+            padding += 2;
             Traverse(w->expr);
-            cout << ",";
             Traverse(w->stmt);
-            cout << ")";
+            padding -= 2;
             break;
         }
         case DOWHILE_STMT:
         {
-            DoWhile * dw = (DoWhile*) n;
-            cout << "<DOWHILE>(";
+            DoWhile *dw = (DoWhile *)n;
+            Pad(padding); cout << "<DOWHILE>\n";
+            padding += 2;
             Traverse(dw->stmt);
-            cout << ",";
             Traverse(dw->expr);
-            cout << ")";
+            padding -= 2;
             break;
         }
         }
+    }
+    else
+    {
+        Pad(padding); cout << "NULL\n";
     }
 }

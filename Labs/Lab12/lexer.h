@@ -17,7 +17,7 @@ struct Token
 	Token() : tag(0) {}
 	Token(char ch) : tag(int(ch)), name({ch}) {}
 	Token(int t, string s) : tag(t), name(s) {}
-	virtual string toString() { return name; }
+	virtual string ToString() { return name; }
 };
 
 // analisador léxico
