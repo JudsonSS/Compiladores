@@ -13,7 +13,7 @@ Node *Parser::Program()
     // program -> int main() block
     if (!Match(Tag::TYPE))
         throw SyntaxError(scanner.Lineno(), "\'int\' esperado");
-    
+
     if (!Match(Tag::MAIN))
         throw SyntaxError(scanner.Lineno(), "\'main\' esperado");
 
@@ -66,14 +66,6 @@ void Parser::Decls()
         // captura nome do tipo
         string type{lookahead->ToString()};
         Match(Tag::TYPE);
-
-        // verifica se é um tipo válido
-        if (type != "int" && type != "float")
-        {
-            stringstream ss;
-            ss << "tipo " << type << " inválido";
-            throw SyntaxError{scanner.Lineno(), ss.str()};
-        }
 
         // captura nome do identificador
         string name{lookahead->ToString()};
@@ -173,6 +165,22 @@ Statement *Parser::Stmt()
             ss << "esperado ; no lugar de  \'" << lookahead->ToString() << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
+
+        // -----------------------------------------
+        // Verificação de Tipos
+        // -----------------------------------------
+        if (left->type != right->type )
+        {
+            stringstream ss;
+            ss << "\'=\' usado com operandos de tipos diferentes ("
+               << left->token->ToString()
+               << ":" << left->TypeName() << ") ("
+               << right->token->ToString()
+               << ":" << right->TypeName() << ") ";
+            throw SyntaxError{scanner.Lineno(), ss.str()};
+        }
+        // -----------------------------------------
+
         stmt = new Assign(left->token, right);
         return stmt;
     }
@@ -289,7 +297,17 @@ Expression *Parser::Local()
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
 
-        expr = new Identifier(s->type == "int" ? ExprType::INT : ExprType::FLOAT, new Token{*lookahead});
+        // identifica o tipo da expressão
+        int etype = ExprType::VOID;
+        if (s->type == "int")
+            etype = ExprType::INT;
+        else if (s->type == "float")
+            etype = ExprType::INT;
+        else if (s->type == "bool")
+            etype = ExprType::BOOL;
+
+
+        expr = new Identifier(etype, new Token{*lookahead});
         Match(Tag::ID);
 
         if (Match('['))
@@ -321,7 +339,7 @@ Expression *Parser::Bool()
     // lor  -> || join lor
     //       | empty
 
-    Expression * expr1 = Join();
+    Expression *expr1 = Join();
 
     // função Lor()
     while (true)
@@ -330,7 +348,7 @@ Expression *Parser::Bool()
 
         if (Match(Tag::OR))
         {
-            Expression * expr2 = Join();
+            Expression *expr2 = Join();
 
             // -----------------------------------------
             // Verificação de Tipos
@@ -733,7 +751,7 @@ Expression *Parser::Unary()
     {
         Token t = *lookahead;
         Match('!');
-        Expression * expr = Unary();
+        Expression *expr = Unary();
 
         // -----------------------------------------
         // Verificação de Tipos
@@ -742,12 +760,12 @@ Expression *Parser::Unary()
         {
             stringstream ss;
             ss << "\'!\' usado com operando não booleano ("
-                << expr->token->ToString()
-                << ":" << expr->TypeName() << ")";
+               << expr->token->ToString()
+               << ":" << expr->TypeName() << ")";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         // -----------------------------------------
-        
+
         unary = new UnaryExpr(ExprType::BOOL, new Token{t}, expr);
     }
     // unary -> -unary
@@ -755,7 +773,7 @@ Expression *Parser::Unary()
     {
         Token t = *lookahead;
         Match('-');
-        Expression * expr = Unary();
+        Expression *expr = Unary();
 
         // -----------------------------------------
         // Verificação de Tipos
@@ -764,8 +782,8 @@ Expression *Parser::Unary()
         {
             stringstream ss;
             ss << "\'-unário\' usado com operando não numérico ("
-                << expr->token->ToString()
-                << ":" << expr->TypeName() << ")";
+               << expr->token->ToString()
+               << ":" << expr->TypeName() << ")";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         // -----------------------------------------
@@ -883,7 +901,7 @@ void Parser::Start()
 
 void Pad(int n)
 {
-    for (int i=0; i < n; ++i)
+    for (int i = 0; i < n; ++i)
         cout << ' ';
 }
 
@@ -898,77 +916,94 @@ void Parser::Traverse(Node *n)
         case SEQ:
         {
             Seq *s = (Seq *)n;
-            Pad(padding); cout << "<SEQ>\n";
+            Pad(padding);
+            cout << "<SEQ>\n";
             padding += 2;
             Traverse(s->stmt);
             Traverse(s->stmts);
             padding -= 2;
-            Pad(padding); cout << "</SEQ>\n";
+            Pad(padding);
+            cout << "</SEQ>\n";
             break;
         }
         case ASSIGN:
         {
             Assign *a = (Assign *)n;
-            Pad(padding); cout << "<ASSIGN>\n";
+            Pad(padding);
+            cout << "<ASSIGN>\n";
             padding += 2;
-            Pad(padding); cout << a->id->ToString() << endl;
+            Pad(padding);
+            cout << a->id->ToString() << endl;
             Traverse(a->expr);
             padding -= 2;
-            Pad(padding); cout << "</ASSIGN>\n";
+            Pad(padding);
+            cout << "</ASSIGN>\n";
             break;
         }
         case REL:
         {
             Relational *r = (Relational *)n;
-            Pad(padding); cout << "<REL>\n";
+            Pad(padding);
+            cout << "<REL>\n";
             padding += 2;
             Traverse(r->expr1);
-            Pad(padding); cout << r->token->ToString() << endl;
+            Pad(padding);
+            cout << r->token->ToString() << endl;
             Traverse(r->expr2);
             padding -= 2;
-            Pad(padding); cout << "</REL>\n";
+            Pad(padding);
+            cout << "</REL>\n";
             break;
         }
         case LOG:
         {
             Logical *l = (Logical *)n;
-            Pad(padding); cout << "<LOG>\n";
+            Pad(padding);
+            cout << "<LOG>\n";
             padding += 2;
-            Traverse(l->expr1); 
-            Pad(padding); cout << l->token->ToString() << endl;
-            Traverse(l->expr2); 
+            Traverse(l->expr1);
+            Pad(padding);
+            cout << l->token->ToString() << endl;
+            Traverse(l->expr2);
             padding -= 2;
-            Pad(padding); cout << "</LOG>\n";
+            Pad(padding);
+            cout << "</LOG>\n";
             break;
         }
         case ARI:
         {
             Arithmetic *a = (Arithmetic *)n;
-            Pad(padding); cout << "<ARI>\n";
+            Pad(padding);
+            cout << "<ARI>\n";
             padding += 2;
-            Traverse(a->expr1); 
-            Pad(padding); cout << a->token->ToString() << endl;
-            Traverse(a->expr2); 
+            Traverse(a->expr1);
+            Pad(padding);
+            cout << a->token->ToString() << endl;
+            Traverse(a->expr2);
             padding -= 2;
-            Pad(padding); cout << "</ARI>\n";
+            Pad(padding);
+            cout << "</ARI>\n";
             break;
         }
         case CONSTANT:
         {
             Constant *c = (Constant *)n;
-            Pad(padding); cout << c->token->ToString() << endl;
+            Pad(padding);
+            cout << c->token->ToString() << endl;
             break;
         }
         case IDENTIFIER:
         {
             Identifier *i = (Identifier *)n;
-            Pad(padding); cout << i->token->ToString() << endl;
+            Pad(padding);
+            cout << i->token->ToString() << endl;
             break;
         }
         case IF_STMT:
         {
             If *i = (If *)n;
-            Pad(padding); cout << "<IF>\n";
+            Pad(padding);
+            cout << "<IF>\n";
             padding += 2;
             Traverse(i->expr);
             Traverse(i->stmt);
@@ -978,7 +1013,8 @@ void Parser::Traverse(Node *n)
         case WHILE_STMT:
         {
             While *w = (While *)n;
-            Pad(padding);cout << "<WHILE>\n";
+            Pad(padding);
+            cout << "<WHILE>\n";
             padding += 2;
             Traverse(w->expr);
             Traverse(w->stmt);
@@ -988,7 +1024,8 @@ void Parser::Traverse(Node *n)
         case DOWHILE_STMT:
         {
             DoWhile *dw = (DoWhile *)n;
-            Pad(padding); cout << "<DOWHILE>\n";
+            Pad(padding);
+            cout << "<DOWHILE>\n";
             padding += 2;
             Traverse(dw->stmt);
             Traverse(dw->expr);
@@ -999,6 +1036,7 @@ void Parser::Traverse(Node *n)
     }
     else
     {
-        Pad(padding); cout << "NULL\n";
+        Pad(padding);
+        cout << "NULL\n";
     }
 }

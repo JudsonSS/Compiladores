@@ -24,8 +24,8 @@ int main(int argc, char **argv)
 			exit(EXIT_FAILURE);
 		}
 
-		cout << "Testando analisador léxico...\n";
-		ScanTest();
+		//cout << "Testando analisador léxico...\n";
+		//ScanTest();
 		
 		Parser tradutor;
 		try
