@@ -302,7 +302,7 @@ Expression *Parser::Local()
         if (s->type == "int")
             etype = ExprType::INT;
         else if (s->type == "float")
-            etype = ExprType::INT;
+            etype = ExprType::FLOAT;
         else if (s->type == "bool")
             etype = ExprType::BOOL;
 
@@ -719,7 +719,7 @@ Expression *Parser::Term()
             if (expr1->type != expr2->type)
             {
                 stringstream ss;
-                ss << "\'-\' usado com operandos de tipos diferentes ("
+                ss << "\'/\' usado com operandos de tipos diferentes ("
                    << expr1->token->ToString()
                    << ":" << expr1->TypeName() << ") ("
                    << expr2->token->ToString()
@@ -899,16 +899,8 @@ void Parser::Start()
     cout << endl;
 }
 
-void Pad(int n)
-{
-    for (int i = 0; i < n; ++i)
-        cout << ' ';
-}
-
 void Parser::Traverse(Node *n)
 {
-    static int padding = 0;
-
     if (n)
     {
         switch (n->node_type)
@@ -916,127 +908,94 @@ void Parser::Traverse(Node *n)
         case SEQ:
         {
             Seq *s = (Seq *)n;
-            Pad(padding);
-            cout << "<SEQ>\n";
-            padding += 2;
+            cout << "<SEQ> ";
             Traverse(s->stmt);
             Traverse(s->stmts);
-            padding -= 2;
-            Pad(padding);
-            cout << "</SEQ>\n";
+            cout << "</SEQ> ";
             break;
         }
         case ASSIGN:
         {
             Assign *a = (Assign *)n;
-            Pad(padding);
-            cout << "<ASSIGN>\n";
-            padding += 2;
-            Pad(padding);
-            cout << a->id->ToString() << endl;
+            cout << "<ASSIGN> ";
+            cout << a->id->ToString() << " ";
             Traverse(a->expr);
-            padding -= 2;
-            Pad(padding);
-            cout << "</ASSIGN>\n";
+            cout << "</ASSIGN> ";
             break;
         }
         case REL:
         {
             Relational *r = (Relational *)n;
-            Pad(padding);
-            cout << "<REL>\n";
-            padding += 2;
+            cout << "<REL> ";
             Traverse(r->expr1);
-            Pad(padding);
-            cout << r->token->ToString() << endl;
+            cout << r->token->ToString() << " ";
             Traverse(r->expr2);
-            padding -= 2;
-            Pad(padding);
-            cout << "</REL>\n";
+            cout << "</REL> ";
             break;
         }
         case LOG:
         {
             Logical *l = (Logical *)n;
-            Pad(padding);
-            cout << "<LOG>\n";
-            padding += 2;
+            cout << "<LOG> ";
             Traverse(l->expr1);
-            Pad(padding);
-            cout << l->token->ToString() << endl;
+            cout << l->token->ToString() << " ";
             Traverse(l->expr2);
-            padding -= 2;
-            Pad(padding);
-            cout << "</LOG>\n";
+            cout << "</LOG> ";
             break;
         }
         case ARI:
         {
             Arithmetic *a = (Arithmetic *)n;
-            Pad(padding);
-            cout << "<ARI>\n";
-            padding += 2;
+            cout << "<ARI> ";
             Traverse(a->expr1);
-            Pad(padding);
-            cout << a->token->ToString() << endl;
+            cout << a->token->ToString() << " ";
             Traverse(a->expr2);
-            padding -= 2;
-            Pad(padding);
-            cout << "</ARI>\n";
+            cout << "</ARI> ";
             break;
         }
         case CONSTANT:
         {
             Constant *c = (Constant *)n;
-            Pad(padding);
-            cout << c->token->ToString() << endl;
+            cout << c->token->ToString() << " ";
             break;
         }
         case IDENTIFIER:
         {
             Identifier *i = (Identifier *)n;
-            Pad(padding);
-            cout << i->token->ToString() << endl;
+            cout << i->token->ToString() << " ";
             break;
         }
         case IF_STMT:
         {
             If *i = (If *)n;
-            Pad(padding);
-            cout << "<IF>\n";
-            padding += 2;
+            cout << "<IF> ";
             Traverse(i->expr);
             Traverse(i->stmt);
-            padding -= 2;
+            cout << "</IF> ";
             break;
         }
         case WHILE_STMT:
         {
             While *w = (While *)n;
-            Pad(padding);
-            cout << "<WHILE>\n";
-            padding += 2;
+            cout << "<WHILE> ";
             Traverse(w->expr);
             Traverse(w->stmt);
-            padding -= 2;
+            cout << "</WHILE> ";
             break;
         }
         case DOWHILE_STMT:
         {
             DoWhile *dw = (DoWhile *)n;
-            Pad(padding);
-            cout << "<DOWHILE>\n";
-            padding += 2;
+            cout << "<DOWHILE> ";
             Traverse(dw->stmt);
             Traverse(dw->expr);
-            padding -= 2;
+            cout << "</DOWHILE> ";
             break;
         }
         }
     }
     else
     {
-        Pad(padding);
-        cout << "NULL\n";
+        cout << "NULL ";
     }
 }

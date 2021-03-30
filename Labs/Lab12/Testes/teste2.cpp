@@ -1,7 +1,7 @@
 // exemplo de programa em linguagem simplificada
 int main()
 {
-    int i; int j; int k; int vet[10];
+    int i; int j; int k; float vet[10];
     i = 0;
     j = 9;
     k = 1;
@@ -17,8 +17,8 @@ int main()
          
 	    if (vet[i] < vet[j])
         {
-            vet[i] = vet[i-1] * 2;
-            vet[j] = vet[j+1] / 2;
+            vet[i] = vet[i-1] * 2.0;
+            vet[j] = vet[j+1] / 2.0;
         }
     }
     while(i < j);
