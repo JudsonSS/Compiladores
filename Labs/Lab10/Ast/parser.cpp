@@ -59,7 +59,10 @@ void Parser::Decls()
 {
     // decls -> decl decls
     //        | empty
-    // decl  -> type id;
+    // decl  -> type id index;
+    //
+    // index -> [ integer ]
+    //        | empty
 
     while (lookahead->tag == Tag::TYPE)
     {
@@ -306,10 +309,11 @@ Expression *Parser::Local()
         else if (s->type == "bool")
             etype = ExprType::BOOL;
 
-
+        // identificador
         expr = new Identifier(etype, new Token{*lookahead});
         Match(Tag::ID);
 
+        // arranjo
         if (Match('['))
         {
             Bool();
