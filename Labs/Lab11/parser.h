@@ -1,5 +1,6 @@
 #include "lexer.h"
 #include "symtable.h"
+#include "ast.h"
 
 class Parser
 {
@@ -8,17 +9,21 @@ private:
 	SymTable * symtable;
 	Token * lookahead;
 	
-	void Program();
-	void Block();
+	Node * Program();
+	Statement * Block();
 	void Decls();
 	void Decl();
-	void Stmts();
-	void Stmt();
-	void Expr();
-	void Rel();
-	void Ari();
-	void Term();
-	void Factor();
+	Statement * Stmts();
+	Statement * Stmt();
+	Expression * Local();
+	Expression * Bool();
+	Expression * Join();
+	Expression * Equality();
+	Expression * Rel();
+	Expression * Ari();
+	Expression * Term();
+	Expression * Unary();
+	Expression * Factor();
 	bool Match(int tag);
 
 public:

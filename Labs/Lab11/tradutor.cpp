@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 			cout << "Verifique se o nome está correto, ou se é protegido para leitura.\n";
 			exit(EXIT_FAILURE);
 		}
-
+		
 		Parser tradutor;
 		try
 		{
@@ -30,11 +30,6 @@ int main(int argc, char **argv)
 		{
 			err.What();
 		}
-
-		// Lexer scanner;
-		// Token * t = nullptr; 
-		// while((t = scanner.Scan()) && (t->tag != EOF))
-		// 	cout << t->toString() << endl; 
 
 		fin.close();
 	}
