@@ -40,7 +40,7 @@ Statement *Parser::Block()
     // ------------------------------------
 
     Decls();
-    Statement *sts = Stmts();
+    Statement * stmts = Stmts();
 
     if (!Match('}'))
         throw SyntaxError(scanner.Lineno(), "\'}\' esperado");
@@ -52,7 +52,7 @@ Statement *Parser::Block()
     symtable = saved;
     // ------------------------------------------------------
 
-    return sts;
+    return stmts;
 }
 
 void Parser::Decls()
@@ -67,11 +67,11 @@ void Parser::Decls()
     while (lookahead->tag == Tag::TYPE)
     {
         // captura nome do tipo
-        string type{lookahead->ToString()};
+        string type{lookahead->lexeme};
         Match(Tag::TYPE);
 
         // captura nome do identificador
-        string name{lookahead->ToString()};
+        string name{lookahead->lexeme};
         Match(Tag::ID);
 
         // cria símbolo
@@ -98,7 +98,7 @@ void Parser::Decls()
             if (!Match(']'))
             {
                 stringstream ss;
-                ss << "esperado ] no lugar de  \'" << lookahead->ToString() << "\'";
+                ss << "esperado ] no lugar de  \'" << lookahead->lexeme << "\'";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
         }
@@ -107,7 +107,7 @@ void Parser::Decls()
         if (!Match(';'))
         {
             stringstream ss;
-            ss << "encontrado \'" << lookahead->ToString() << "\' no lugar de ';'";
+            ss << "encontrado \'" << lookahead->lexeme << "\' no lugar de ';'";
             throw SyntaxError{scanner.Lineno(), "esperado ;"};
         }
     }
@@ -158,14 +158,14 @@ Statement *Parser::Stmt()
         if (!Match('='))
         {
             stringstream ss;
-            ss << "esperado = no lugar de  \'" << lookahead->ToString() << "\'";
+            ss << "esperado = no lugar de  \'" << lookahead->lexeme << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         Expression *right = Bool();
         if (!Match(';'))
         {
             stringstream ss;
-            ss << "esperado ; no lugar de  \'" << lookahead->ToString() << "\'";
+            ss << "esperado ; no lugar de  \'" << lookahead->lexeme << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
 
@@ -176,9 +176,9 @@ Statement *Parser::Stmt()
         {
             stringstream ss;
             ss << "\'=\' usado com operandos de tipos diferentes ("
-               << left->token->ToString()
+               << left->token->lexeme
                << ":" << left->TypeName() << ") ("
-               << right->token->ToString()
+               << right->token->lexeme
                << ":" << right->TypeName() << ") ";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
@@ -195,14 +195,14 @@ Statement *Parser::Stmt()
         if (!Match('('))
         {
             stringstream ss;
-            ss << "esperado ( no lugar de  \'" << lookahead->ToString() << "\'";
+            ss << "esperado ( no lugar de  \'" << lookahead->lexeme << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         Expression *cond = Bool();
         if (!Match(')'))
         {
             stringstream ss;
-            ss << "esperado ) no lugar de  \'" << lookahead->ToString() << "\'";
+            ss << "esperado ) no lugar de  \'" << lookahead->lexeme << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         Statement *inst = Stmt();
@@ -217,14 +217,14 @@ Statement *Parser::Stmt()
         if (!Match('('))
         {
             stringstream ss;
-            ss << "esperado ( no lugar de  \'" << lookahead->ToString() << "\'";
+            ss << "esperado ( no lugar de  \'" << lookahead->lexeme << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         Expression *cond = Bool();
         if (!Match(')'))
         {
             stringstream ss;
-            ss << "esperado ) no lugar de  \'" << lookahead->ToString() << "\'";
+            ss << "esperado ) no lugar de  \'" << lookahead->lexeme << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         Statement *inst = Stmt();
@@ -240,26 +240,26 @@ Statement *Parser::Stmt()
         if (!Match(Tag::WHILE))
         {
             stringstream ss;
-            ss << "esperado \'while\' no lugar de  \'" << lookahead->ToString() << "\'";
+            ss << "esperado \'while\' no lugar de  \'" << lookahead->lexeme << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         if (!Match('('))
         {
             stringstream ss;
-            ss << "esperado ( no lugar de  \'" << lookahead->ToString() << "\'";
+            ss << "esperado ( no lugar de  \'" << lookahead->lexeme << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         Expression *cond = Bool();
         if (!Match(')'))
         {
             stringstream ss;
-            ss << "esperado ) no lugar de  \'" << lookahead->ToString() << "\'";
+            ss << "esperado ) no lugar de  \'" << lookahead->lexeme << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         if (!Match(';'))
         {
             stringstream ss;
-            ss << "esperado ; no lugar de  \'" << lookahead->ToString() << "\'";
+            ss << "esperado ; no lugar de  \'" << lookahead->lexeme << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         stmt = new DoWhile(inst, cond);
@@ -274,7 +274,7 @@ Statement *Parser::Stmt()
     default:
     {
         stringstream ss;
-        ss << "\'" << lookahead->ToString() << "\' não inicia uma instrução válida";
+        ss << "\'" << lookahead->lexeme << "\' não inicia uma instrução válida";
         throw SyntaxError{scanner.Lineno(), ss.str()};
     }
     }
@@ -292,11 +292,11 @@ Expression *Parser::Local()
     case Tag::ID:
     {
         // verifica tipo da variável na tabela de símbolos
-        Symbol *s = symtable->Find(lookahead->ToString());
+        Symbol *s = symtable->Find(lookahead->lexeme);
         if (!s)
         {
             stringstream ss;
-            ss << "variável \"" << lookahead->ToString() << "\" não declarada";
+            ss << "variável \"" << lookahead->lexeme << "\" não declarada";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
 
@@ -320,7 +320,7 @@ Expression *Parser::Local()
             if (!Match(']'))
             {
                 stringstream ss;
-                ss << "esperado ] no lugar de  \'" << lookahead->ToString() << "\'";
+                ss << "esperado ] no lugar de  \'" << lookahead->lexeme << "\'";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
         }
@@ -361,9 +361,9 @@ Expression *Parser::Bool()
             {
                 stringstream ss;
                 ss << "\'||\' usado com operandos não booleanos ("
-                   << expr1->token->ToString()
+                   << expr1->token->lexeme
                    << ":" << expr1->TypeName() << ") ("
-                   << expr2->token->ToString()
+                   << expr2->token->lexeme
                    << ":" << expr2->TypeName() << ") ";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
@@ -404,9 +404,9 @@ Expression *Parser::Join()
             {
                 stringstream ss;
                 ss << "\'&&\' usado com operandos não booleanos ("
-                   << expr1->token->ToString()
+                   << expr1->token->lexeme
                    << ":" << expr1->TypeName() << ") ("
-                   << expr2->token->ToString()
+                   << expr2->token->lexeme
                    << ":" << expr2->TypeName() << ") ";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
@@ -450,9 +450,9 @@ Expression *Parser::Equality()
             {
                 stringstream ss;
                 ss << "\'==\' usado com operandos de tipos diferentes ("
-                   << expr1->token->ToString()
+                   << expr1->token->lexeme
                    << ":" << expr1->TypeName() << ") ("
-                   << expr2->token->ToString()
+                   << expr2->token->lexeme
                    << ":" << expr2->TypeName() << ") ";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
@@ -472,9 +472,9 @@ Expression *Parser::Equality()
             {
                 stringstream ss;
                 ss << "\'!=\' usado com operandos de tipos diferentes ("
-                   << expr1->token->ToString()
+                   << expr1->token->lexeme
                    << ":" << expr1->TypeName() << ") ("
-                   << expr2->token->ToString()
+                   << expr2->token->lexeme
                    << ":" << expr2->TypeName() << ") ";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
@@ -520,9 +520,9 @@ Expression *Parser::Rel()
             {
                 stringstream ss;
                 ss << "\'<\' usado com operandos de tipos diferentes ("
-                   << expr1->token->ToString()
+                   << expr1->token->lexeme
                    << ":" << expr1->TypeName() << ") ("
-                   << expr2->token->ToString()
+                   << expr2->token->lexeme
                    << ":" << expr2->TypeName() << ") ";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
@@ -542,9 +542,9 @@ Expression *Parser::Rel()
             {
                 stringstream ss;
                 ss << "\'<=\' usado com operandos de tipos diferentes ("
-                   << expr1->token->ToString()
+                   << expr1->token->lexeme
                    << ":" << expr1->TypeName() << ") ("
-                   << expr2->token->ToString()
+                   << expr2->token->lexeme
                    << ":" << expr2->TypeName() << ") ";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
@@ -564,9 +564,9 @@ Expression *Parser::Rel()
             {
                 stringstream ss;
                 ss << "\'>\' usado com operandos de tipos diferentes ("
-                   << expr1->token->ToString()
+                   << expr1->token->lexeme
                    << ":" << expr1->TypeName() << ") ("
-                   << expr2->token->ToString()
+                   << expr2->token->lexeme
                    << ":" << expr2->TypeName() << ") ";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
@@ -586,9 +586,9 @@ Expression *Parser::Rel()
             {
                 stringstream ss;
                 ss << "\'>=\' usado com operandos de tipos diferentes ("
-                   << expr1->token->ToString()
+                   << expr1->token->lexeme
                    << ":" << expr1->TypeName() << ") ("
-                   << expr2->token->ToString()
+                   << expr2->token->lexeme
                    << ":" << expr2->TypeName() << ") ";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
@@ -633,9 +633,9 @@ Expression *Parser::Ari()
             {
                 stringstream ss;
                 ss << "\'+\' usado com operandos de tipos diferentes ("
-                   << expr1->token->ToString()
+                   << expr1->token->lexeme
                    << ":" << expr1->TypeName() << ") ("
-                   << expr2->token->ToString()
+                   << expr2->token->lexeme
                    << ":" << expr2->TypeName() << ") ";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
@@ -656,9 +656,9 @@ Expression *Parser::Ari()
             {
                 stringstream ss;
                 ss << "\'-\' usado com operandos de tipos diferentes ("
-                   << expr1->token->ToString()
+                   << expr1->token->lexeme
                    << ":" << expr1->TypeName() << ") ("
-                   << expr2->token->ToString()
+                   << expr2->token->lexeme
                    << ":" << expr2->TypeName() << ") ";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
@@ -701,9 +701,9 @@ Expression *Parser::Term()
             {
                 stringstream ss;
                 ss << "\'*\' usado com operandos de tipos diferentes ("
-                   << expr1->token->ToString()
+                   << expr1->token->lexeme
                    << ":" << expr1->TypeName() << ") ("
-                   << expr2->token->ToString()
+                   << expr2->token->lexeme
                    << ":" << expr2->TypeName() << ") ";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
@@ -724,9 +724,9 @@ Expression *Parser::Term()
             {
                 stringstream ss;
                 ss << "\'/\' usado com operandos de tipos diferentes ("
-                   << expr1->token->ToString()
+                   << expr1->token->lexeme
                    << ":" << expr1->TypeName() << ") ("
-                   << expr2->token->ToString()
+                   << expr2->token->lexeme
                    << ":" << expr2->TypeName() << ") ";
                 throw SyntaxError{scanner.Lineno(), ss.str()};
             }
@@ -764,7 +764,7 @@ Expression *Parser::Unary()
         {
             stringstream ss;
             ss << "\'!\' usado com operando não booleano ("
-               << expr->token->ToString()
+               << expr->token->lexeme
                << ":" << expr->TypeName() << ")";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
@@ -786,7 +786,7 @@ Expression *Parser::Unary()
         {
             stringstream ss;
             ss << "\'-unário\' usado com operando não numérico ("
-               << expr->token->ToString()
+               << expr->token->lexeme
                << ":" << expr->TypeName() << ")";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
@@ -823,7 +823,7 @@ Expression *Parser::Factor()
         if (!Match(')'))
         {
             stringstream ss;
-            ss << "esperado ) no lugar de  \'" << lookahead->ToString() << "\'";
+            ss << "esperado ) no lugar de  \'" << lookahead->lexeme << "\'";
             throw SyntaxError{scanner.Lineno(), ss.str()};
         }
         break;
@@ -871,7 +871,7 @@ Expression *Parser::Factor()
     default:
     {
         stringstream ss;
-        ss << "uma expressão é esperada no lugar de  \'" << lookahead->ToString() << "\'";
+        ss << "uma expressão é esperada no lugar de  \'" << lookahead->lexeme << "\'";
         throw SyntaxError{scanner.Lineno(), ss.str()};
         break;
     }

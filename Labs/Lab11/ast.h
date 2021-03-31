@@ -43,6 +43,7 @@ struct Expression : public Node
 {
     int type;
     Token * token = nullptr;
+    
     Expression(Token *t) : Node(NodeType::EXPR), type(ExprType::VOID), token(t) {}
     Expression(int ntype, int etype, Token * t) : Node(ntype), type(etype), token(t) {}
     
