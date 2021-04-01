@@ -1,3 +1,6 @@
+#ifndef COMPILER_PARSER
+#define COMPILER_PARSER
+
 #include "lexer.h"
 #include "symtable.h"
 #include "ast.h"
@@ -5,7 +8,6 @@
 class Parser
 {
 private:
-	Lexer scanner;
 	SymTable * symtable;
 	Token * lookahead;
 	
@@ -25,9 +27,11 @@ private:
 	Expression * Unary();
 	Expression * Factor();
 	bool Match(int tag);
-	void Traverse(Node * n);
 
 public:
 	Parser();
-	void Start();
+	Node * Start();
+	static int LineNo();
 };
+
+#endif

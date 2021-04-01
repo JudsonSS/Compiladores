@@ -1,3 +1,6 @@
+#ifndef COMPILER_LEXER
+#define COMPILER_LEXER
+
 #include <unordered_map>
 #include <string>
 #include <sstream>
@@ -13,11 +16,11 @@ enum Tag { ID = 256, INTEGER, REAL, TYPE, TRUE, FALSE, MAIN, IF, WHILE, DO, OR, 
 struct Token
 {
 	int tag;
-	string name;
+	string lexeme;
+
 	Token() : tag(0) {}
-	Token(char ch) : tag(int(ch)), name({ch}) {}
-	Token(int t, string s) : tag(t), name(s) {}
-	virtual string ToString() { return name; }
+	Token(char ch) : tag(int(ch)), lexeme({ch}) {}
+	Token(int t, string s) : tag(t), lexeme(s) {}
 };
 
 // analisador léxico
@@ -36,3 +39,5 @@ public:
 	int Lineno();		// retorna linha atual
 	Token * Scan();		// retorna próximo token da entrada
 };
+
+#endif
