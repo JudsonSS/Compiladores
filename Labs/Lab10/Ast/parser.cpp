@@ -299,10 +299,11 @@ Expression *Parser::Local()
         expr = new Identifier(etype, new Token{*lookahead});
         Match(Tag::ID);
 
-        // arranjo
+        // acesso a elemento de um arranjo
         if (Match('['))
         {
-            Bool();
+            expr = new Access(etype, new Token{*lookahead}, expr, Bool());
+
             if (!Match(']'))
             {
                 stringstream ss;

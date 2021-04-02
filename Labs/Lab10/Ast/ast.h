@@ -11,6 +11,7 @@ enum NodeType
     EXPR,
     CONSTANT,
     IDENTIFIER,
+    ACCESS,
     LOG,
     REL,
     ARI,
@@ -61,6 +62,13 @@ struct Constant : public Expression
 struct Identifier : public Expression
 {
     Identifier(int etype, Token *t);
+};
+
+struct Access : public Expression
+{
+    Expression * id;
+    Expression * expr;
+    Access(int etype, Token * t, Expression * i, Expression * e);
 };
 
 struct Logical : public Expression

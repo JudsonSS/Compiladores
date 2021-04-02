@@ -93,7 +93,8 @@ void Traverse(Node *n)
         {
             Assign *a = (Assign *)n;
             cout << "<ASSIGN> ";
-            cout << a->id->Name() << " ";
+            Traverse(a->id);
+            cout << "= ";
             Traverse(a->expr);
             cout << "</ASSIGN> ";
             break;
@@ -147,6 +148,15 @@ void Traverse(Node *n)
         {
             Identifier *i = (Identifier *)n;
             cout << i->Name() << " ";
+            break;
+        }
+        case ACCESS:
+        {
+            Access *a = (Access*) n;
+            Traverse(a->id);
+            cout << "[ ";
+            Traverse(a->expr);
+            cout << "] ";
             break;
         }
         case IF_STMT:

@@ -5,23 +5,23 @@ using std::stringstream;
 
 extern Lexer *scanner;
 
-// ----------------------------
+// ----
 // Node
-//-----------------------------
+// ----
 
 Node::Node() : node_type(NodeType::UNKNOWN) {}
 Node::Node(int t) : node_type(t) {}
 
-// ----------------------------
+// ---------
 // Statement
-//-----------------------------
+// ---------
 
 Statement::Statement() : Node(NodeType::STMT) {}
 Statement::Statement(int type) : Node(type) {}
 
-// ----------------------------
+// ----------
 // Expression
-//-----------------------------
+// ----------
 
 Expression::Expression(Token *t) : Node(NodeType::EXPR), type(ExprType::VOID), token(t) {}
 Expression::Expression(int ntype, int etype, Token *t) : Node(ntype), type(etype), token(t) {}
@@ -49,21 +49,27 @@ string Expression::Type()
     }
 }
 
-// ----------------------------
+// --------
 // Constant
-//-----------------------------
+// --------
 
 Constant::Constant(int etype, Token *t) : Expression(NodeType::CONSTANT, etype, t) {}
 
-// ----------------------------
+// ----------
 // Identifier
-//-----------------------------
+// ----------
 
 Identifier::Identifier(int etype, Token *t) : Expression(NodeType::IDENTIFIER, etype, t) {}
 
-// ----------------------------
+// ------
+// Access
+// ------
+
+Access::Access(int etype, Token * t, Expression * i, Expression * e): Expression(NodeType::ACCESS, etype, t), id(i), expr(e) {}
+
+// -------
 // Logical
-//-----------------------------
+// -------
 
 Logical::Logical(Token *t, Expression *e1, Expression *e2) : Expression(NodeType::LOG, ExprType::BOOL, t), expr1(e1), expr2(e2)
 {
@@ -78,9 +84,9 @@ Logical::Logical(Token *t, Expression *e1, Expression *e2) : Expression(NodeType
     }
 }
 
-// ----------------------------
+// ----------
 // Relational
-//-----------------------------
+// ----------
 
 Relational::Relational(Token *t, Expression *e1, Expression *e2) : Expression(NodeType::REL, ExprType::BOOL, t), expr1(e1), expr2(e2)
 {
@@ -95,9 +101,9 @@ Relational::Relational(Token *t, Expression *e1, Expression *e2) : Expression(No
     }
 }
 
-// ----------------------------
+// ----------
 // Arithmetic
-//-----------------------------
+// ----------
 
 Arithmetic::Arithmetic(int etype, Token *t, Expression *e1, Expression *e2) : Expression(NodeType::ARI, etype, t), expr1(e1), expr2(e2)
 {
@@ -112,9 +118,9 @@ Arithmetic::Arithmetic(int etype, Token *t, Expression *e1, Expression *e2) : Ex
     }
 }
 
-// ----------------------------
+// ---------
 // UnaryExpr
-//-----------------------------
+// ---------
 
 UnaryExpr::UnaryExpr(int etype, Token *t, Expression *e) : Expression(NodeType::UNARY, etype, t), expr(e)
 {
@@ -128,15 +134,15 @@ UnaryExpr::UnaryExpr(int etype, Token *t, Expression *e) : Expression(NodeType::
     }
 }
 
-// ----------------------------
+// ----
 // Seq
-//-----------------------------
+// ----
 
 Seq::Seq(Statement *s, Statement *ss) : Statement(NodeType::SEQ), stmt(s), stmts(ss) {}
 
-// ----------------------------
+// ------
 // Assign
-//-----------------------------
+// ------
 
 Assign::Assign(Expression *i, Expression *e) : Statement(NodeType::ASSIGN), id(i), expr(e)
 {
@@ -151,20 +157,20 @@ Assign::Assign(Expression *i, Expression *e) : Statement(NodeType::ASSIGN), id(i
     }
 }
 
-// ----------------------------
+// ----
 // If
-//-----------------------------
+// ----
 
 If::If(Expression *e, Statement *s) : Statement(NodeType::IF_STMT), expr(e), stmt(s) {}
 
-// ----------------------------
+// -----
 // While
-//-----------------------------
+// -----
 
 While::While(Expression *e, Statement *s) : Statement(NodeType::WHILE_STMT), expr(e), stmt(s) {}
 
-// ----------------------------
+// --------
 // Do-While
-//-----------------------------
+// --------
 
 DoWhile::DoWhile(Statement *s, Expression *e) : Statement(NodeType::DOWHILE_STMT), stmt(s), expr(e) {}
