@@ -1,3 +1,6 @@
+#ifndef COMPILER_SYMTABLE
+#define COMPILER_SYMTABLE
+
 #include <unordered_map>
 #include <string>
 using std::unordered_map;
@@ -27,3 +30,4 @@ public:
 	Symbol * Find(string s); 
 };
 
+#endif

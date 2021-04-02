@@ -1,3 +1,6 @@
+#ifndef COMPILER_LEXER
+#define COMPILER_LEXER
+
 #include <unordered_map>
 #include <string>
 #include <sstream>
@@ -36,3 +39,5 @@ public:
 	int Lineno();		// retorna linha atual
 	Token * Scan();		// retorna próximo token da entrada
 };
+
+#endif

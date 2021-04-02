@@ -15,7 +15,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/Debug",    
             },
-            "problemMatcher": [ ],
+            "problemMatcher": [ ]
         },
         {
             "label": "make debug",
@@ -29,7 +29,10 @@
             "options": {
                 "cwd": "${workspaceFolder}/Debug",    
             },
-            "problemMatcher": ["$gcc"],
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": ["relative", "/"]
+            }
         },
         {
             "label": "cmake release",
@@ -43,7 +46,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/Release",    
             },
-            "problemMatcher": [ ],
+            "problemMatcher": [ ]
         },
         {
             "label": "make release",
@@ -54,7 +57,10 @@
             "options": {
                 "cwd": "${workspaceFolder}/Release",    
             },
-            "problemMatcher": ["$gcc"],
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": ["relative", "/"]
+            }
         }
     ],
     "presentation": {

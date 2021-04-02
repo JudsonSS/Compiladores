@@ -1,12 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include "lexer.h"
 #include "parser.h"
 #include "error.h"
+#include "ast.h"
+#include "checker.h"
 using namespace std;
 
-// arquivo de entrada
 ifstream fin;
+Lexer * scanner;
 
 // programa pode receber nomes de arquivos
 int main(int argc, char **argv)
@@ -17,20 +20,23 @@ int main(int argc, char **argv)
 		if (!fin.is_open())
 		{
 			cout << "Falha na abertura do arquivo \'" << argv[1] << "\'.\n";
-			cout << "Verifique se o nome está correto, ou se é protegido para leitura.\n";
 			exit(EXIT_FAILURE);
 		}
-		
+
+		//TestLexer();
+		Lexer leitor;
+		scanner = &leitor;
+		Node * ast;		
 		Parser tradutor;
 		try
 		{
-			tradutor.Start();
+			ast = tradutor.Start();
 		}
 		catch (SyntaxError err)
 		{
 			err.What();
 		}
-
 		fin.close();
+		TestParser(ast);
 	}
 }

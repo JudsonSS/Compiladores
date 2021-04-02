@@ -1,3 +1,6 @@
+#ifndef COMPILER_ERROR
+#define COMPILER_ERROR
+
 #include <string>
 using std::string;
 
@@ -10,3 +13,5 @@ public:
 	SyntaxError(int line, string msg);
 	void What();
 };
+
+#endif
