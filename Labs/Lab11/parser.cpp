@@ -185,6 +185,9 @@ Statement *Parser::Stmt()
             throw SyntaxError{scanner->Lineno(), ss.str()};
         }
         Expression *cond = Bool();
+        // criação adiantada do if para pegar erros 
+        // da expressão condicional na linha correta
+        stmt = new If(cond, nullptr);
         if (!Match(')'))
         {
             stringstream ss;
@@ -192,7 +195,8 @@ Statement *Parser::Stmt()
             throw SyntaxError{scanner->Lineno(), ss.str()};
         }
         Statement *inst = Stmt();
-        stmt = new If(cond, inst);
+        // modifica nó If que foi criado apenas com a expressão condicional
+        ((If*)stmt)->stmt = inst;
         return stmt;
     }
 
@@ -302,7 +306,8 @@ Expression *Parser::Local()
         // acesso a elemento de um arranjo
         if (Match('['))
         {
-            expr = new Access(etype, new Token{*lookahead}, expr, Bool());
+            Expression * index = Bool();
+            expr = new Access(etype, new Token{Tag::ID, "[]"}, expr, index);
 
             if (!Match(']'))
             {

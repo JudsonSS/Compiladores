@@ -20,7 +20,8 @@ enum NodeType
     ASSIGN,
     IF_STMT,
     WHILE_STMT,
-    DOWHILE_STMT
+    DOWHILE_STMT,
+    TEMP
 };
 
 enum ExprType
@@ -34,8 +35,15 @@ enum ExprType
 struct Node
 {
     int node_type;
+    static unsigned labels;
+
     Node();
     Node(int t);
+    virtual void Gen();
+    virtual string ToString();
+    unsigned NewLabel();
+    void PrintLabel(unsigned i);
+    void Print(string s);
 };
 
 struct Statement : public Node
@@ -47,11 +55,20 @@ struct Statement : public Node
 struct Expression : public Node
 {
     int type;
-    Token *token;
+    Token * token;
+        
     Expression(Token *t);
     Expression(int ntype, int etype, Token *t);
-    string Name();
+    virtual string ToString();
     string Type();
+};
+
+struct Temp : public Expression
+{
+    static int count;
+    int number;
+    Temp(int etype);
+    string ToString();
 };
 
 struct Constant : public Expression
@@ -69,6 +86,7 @@ struct Access : public Expression
     Expression * id;
     Expression * expr;
     Access(int etype, Token * t, Expression * i, Expression * e);
+    string ToString();
 };
 
 struct Logical : public Expression
@@ -103,6 +121,7 @@ struct Seq : public Statement
     Statement *stmt;
     Statement *stmts;
     Seq(Statement *s, Statement *ss);
+    void Gen();
 };
 
 struct Assign : public Statement
@@ -110,6 +129,7 @@ struct Assign : public Statement
     Expression *id;
     Expression *expr;
     Assign(Expression *i, Expression *e);
+    void Gen();
 };
 
 struct If : public Statement
@@ -117,6 +137,7 @@ struct If : public Statement
     Expression *expr;
     Statement *stmt;
     If(Expression *e, Statement *s);
+    void Gen();
 };
 
 struct While : public Statement

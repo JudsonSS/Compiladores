@@ -5,7 +5,9 @@
 #include "parser.h"
 #include "error.h"
 #include "ast.h"
+#include "generator.h"
 #include "checker.h"
+
 using namespace std;
 
 ifstream fin;
@@ -37,6 +39,9 @@ int main(int argc, char **argv)
 			err.What();
 		}
 		fin.close();
-		TestParser(ast);
+		//TestParser(ast);
+
+		// gera código intermediário
+		ast->Gen();
 	}
 }

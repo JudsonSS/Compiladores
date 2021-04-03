@@ -104,7 +104,7 @@ void Traverse(Node *n)
             Relational *r = (Relational *)n;
             cout << "<REL> ";
             Traverse(r->expr1);
-            cout << r->Name() << " ";
+            cout << r->ToString() << " ";
             Traverse(r->expr2);
             cout << "</REL> ";
             break;
@@ -114,7 +114,7 @@ void Traverse(Node *n)
             Logical *l = (Logical *)n;
             cout << "<LOG> ";
             Traverse(l->expr1);
-            cout << l->Name() << " ";
+            cout << l->ToString() << " ";
             Traverse(l->expr2);
             cout << "</LOG> ";
             break;
@@ -124,7 +124,7 @@ void Traverse(Node *n)
             Arithmetic *a = (Arithmetic *)n;
             cout << "<ARI> ";
             Traverse(a->expr1);
-            cout << a->Name() << " ";
+            cout << a->ToString() << " ";
             Traverse(a->expr2);
             cout << "</ARI> ";
             break;
@@ -133,7 +133,7 @@ void Traverse(Node *n)
         {
             UnaryExpr *u = (UnaryExpr *)n;
             cout << "<UNARY> ";
-            cout << u->Name() << " ";
+            cout << u->ToString() << " ";
             Traverse(u->expr);
             cout << "</UNARY> ";
             break;
@@ -141,13 +141,13 @@ void Traverse(Node *n)
         case CONSTANT:
         {
             Constant *c = (Constant *)n;
-            cout << c->Name() << " ";
+            cout << c->ToString() << " ";
             break;
         }
         case IDENTIFIER:
         {
             Identifier *i = (Identifier *)n;
-            cout << i->Name() << " ";
+            cout << i->ToString() << " ";
             break;
         }
         case ACCESS:
