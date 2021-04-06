@@ -5,7 +5,7 @@
 #include "parser.h"
 #include "error.h"
 #include "ast.h"
-#include "generator.h"
+#include "gen.h"
 #include "checker.h"
 
 using namespace std;

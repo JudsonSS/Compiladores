@@ -1,6 +1,6 @@
 #include <iostream>
 #include "error.h"
-#include "generator.h"
+#include "gen.h"
 using std::cout;
 using std::endl;
 
