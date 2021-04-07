@@ -28,20 +28,21 @@ int main(int argc, char **argv)
 		//TestLexer();
 		Lexer leitor;
 		scanner = &leitor;
-		Node * ast;		
+		Statement * ast;		
 		Parser tradutor;
 		try
 		{
+			// gera árvore sintática
 			ast = tradutor.Start();
+			
+			// gera código intermediário
+			ast->Gen();
 		}
 		catch (SyntaxError err)
 		{
 			err.What();
 		}
 		fin.close();
-		//TestParser(ast);
-
-		// gera código intermediário
-		ast->Gen();
+		//TestParser(ast);		
 	}
 }

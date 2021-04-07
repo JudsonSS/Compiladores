@@ -37,7 +37,7 @@ Expression *Rvalue(Expression *n)
         Temp * t = new Temp(ari->type);
         Expression * e1 = Rvalue(ari->expr1);
         Expression * e2 = Rvalue(ari->expr2);
-        cout << t->ToString() << " = " 
+        cout << '\t' << t->ToString() << " = " 
              << e1->ToString() << " " 
              << ari->ToString() << " " 
              << e2->ToString() << endl;
@@ -47,10 +47,34 @@ Expression *Rvalue(Expression *n)
     {
         Relational * rel = (Relational*) n;
         Temp * t = new Temp(rel->type);
-        cout << t->ToString() << " = " 
-             << Rvalue(rel->expr1)->ToString() 
-             << " " << rel->ToString() << " "
-             << Rvalue(rel->expr2)->ToString() 
+        Expression * e1 = Rvalue(rel->expr1);
+        Expression * e2 = Rvalue(rel->expr2);
+        cout << '\t' << t->ToString() << " = " 
+             << e1->ToString() << " " 
+             << rel->ToString() << " " 
+             << e2->ToString() << endl;
+        return t;
+    }
+    else if (n->node_type == NodeType::LOG)
+    {
+        Logical * log = (Logical*) n;
+        Temp * t = new Temp(log->type);
+        Expression * e1 = Rvalue(log->expr1);
+        Expression * e2 = Rvalue(log->expr2);
+        cout << '\t' << t->ToString() << " = " 
+             << e1->ToString() << " " 
+             << log->ToString() << " " 
+             << e2->ToString() << endl;
+        return t;
+    }
+    else if (n->node_type == NodeType::UNARY)
+    {
+        UnaryExpr * una = (UnaryExpr*) n;
+        Temp * t = new Temp(una->type);
+        Expression * e = Rvalue(una->expr);
+        cout << '\t' << t->ToString() << " = " 
+             << una->ToString() 
+             << e->ToString() 
              << endl;
         return t;
     }
@@ -59,7 +83,7 @@ Expression *Rvalue(Expression *n)
         Access * access = (Access*) n;
         Temp * temp = new Temp(access->type);
         Expression * right = Lvalue(n);
-        cout << temp->ToString() << " = " 
+        cout << '\t' << temp->ToString() << " = " 
              << right->ToString() 
              << endl;
         return temp;
@@ -69,7 +93,8 @@ Expression *Rvalue(Expression *n)
         Access * acc = (Access*) Lvalue(n);
         Expression * left = Lvalue(acc->id);
         Expression * right = Rvalue(acc->expr);
-        cout << left->ToString()  
+        cout << '\t' 
+             << left->ToString()  
              << " = " 
              << right->ToString() 
              << endl;

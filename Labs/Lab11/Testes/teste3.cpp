@@ -5,7 +5,7 @@ int main()
     int j;
     int k;
 
-    i = 0;
+    i = 9;
     j = 2;
     k = 1;
 

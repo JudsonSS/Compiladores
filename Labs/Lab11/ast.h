@@ -39,17 +39,15 @@ struct Node
 
     Node();
     Node(int t);
-    virtual void Gen();
     virtual string ToString();
     unsigned NewLabel();
-    void PrintLabel(unsigned i);
-    void Print(string s);
 };
 
 struct Statement : public Node
 {
     Statement();
     Statement(int type);
+    virtual void Gen();
 };
 
 struct Expression : public Node
@@ -134,6 +132,7 @@ struct Assign : public Statement
 
 struct If : public Statement
 {
+    unsigned after;
     Expression *expr;
     Statement *stmt;
     If(Expression *e, Statement *s);
@@ -142,16 +141,21 @@ struct If : public Statement
 
 struct While : public Statement
 {
+    unsigned before;
+    unsigned after;
     Expression *expr;
     Statement *stmt;
     While(Expression *e, Statement *s);
+    void Gen();
 };
 
 struct DoWhile : public Statement
 {
+    unsigned before;
     Statement *stmt;
     Expression *expr;
     DoWhile(Statement *s, Expression *e);
+    void Gen();
 };
 
 #endif

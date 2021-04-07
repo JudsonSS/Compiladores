@@ -11,7 +11,7 @@ private:
 	SymTable * symtable;
 	Token * lookahead;
 	
-	Node * Program();
+	Statement * Program();
 	Statement * Block();
 	void Decls();
 	void Decl();
@@ -30,7 +30,7 @@ private:
 
 public:
 	Parser();
-	Node * Start();
+	Statement * Start();
 	static int LineNo();
 };
 

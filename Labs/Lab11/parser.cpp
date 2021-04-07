@@ -10,7 +10,7 @@ using std::stringstream;
 
 extern Lexer * scanner;
 
-Node *Parser::Program()
+Statement * Parser::Program()
 {
     // program -> int main() block
     if (!Match(Tag::TYPE))
@@ -28,7 +28,7 @@ Node *Parser::Program()
     return Block();
 }
 
-Statement *Parser::Block()
+Statement * Parser::Block()
 {
     // block -> { decls stmts }
     if (!Match('{'))
@@ -42,7 +42,7 @@ Statement *Parser::Block()
     // ------------------------------------
 
     Decls();
-    Statement *sts = Stmts();
+    Statement * sts = Stmts();
 
     if (!Match('}'))
         throw SyntaxError(scanner->Lineno(), "\'}\' esperado");
@@ -669,7 +669,7 @@ Parser::Parser()
     symtable = nullptr;
 }
 
-Node * Parser::Start()
+Statement * Parser::Start()
 {
     return Program();
 }
