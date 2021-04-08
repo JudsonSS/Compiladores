@@ -579,7 +579,7 @@ Expression *Parser::Factor()
     // factor -> (bool)
     //         | local
     //         | integer
-    //         | real
+    //         | floating
     //         | true
     //         | false
 
@@ -616,11 +616,11 @@ Expression *Parser::Factor()
         break;
     }
 
-    // factor -> real
-    case Tag::REAL:
+    // factor -> floating
+    case Tag::FLOATING:
     {
         expr = new Constant(ExprType::FLOAT, new Token{*lookahead});
-        Match(Tag::REAL);
+        Match(Tag::FLOATING);
         break;
     }
 

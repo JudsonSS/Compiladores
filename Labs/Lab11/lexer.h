@@ -10,7 +10,7 @@ using std::string;
 
 // cada token possui uma tag (número a partir de 256)
 // a tag de caracteres individuais é seu código ASCII
-enum Tag { ID = 256, INTEGER, REAL, TYPE, TRUE, FALSE, MAIN, IF, WHILE, DO, OR, AND, EQ, NEQ, LTE, GTE };
+enum Tag { ID = 256, INTEGER, FLOATING, TYPE, TRUE, FALSE, MAIN, IF, WHILE, DO, OR, AND, EQ, NEQ, LTE, GTE };
 
 // classe para representar tokens
 struct Token

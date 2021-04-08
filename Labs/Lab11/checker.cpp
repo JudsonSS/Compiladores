@@ -20,8 +20,8 @@ void TestLexer()
         case INTEGER:
             cout << "<INTEGER," << t->lexeme << "> ";
             break;
-        case REAL:
-            cout << "<REAL," << t->lexeme << "> ";
+        case FLOATING:
+            cout << "<FLOATING," << t->lexeme << "> ";
             break;
         case TYPE:
             cout << "<TYPE," << t->lexeme << "> ";

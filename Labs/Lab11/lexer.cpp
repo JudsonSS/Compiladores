@@ -119,7 +119,7 @@ Token * Lexer::Scan()
 		// se o número é um ponto-flutuante
 		if (dot)
 		{
-			token = Token{Tag::REAL, ss.str()};
+			token = Token{Tag::FLOATING, ss.str()};
 			return &token;
 		}
 		else
