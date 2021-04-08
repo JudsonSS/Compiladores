@@ -1,0 +1,8 @@
+1. Descreva as linguagens denotadas pelas seguintes expressões regulares:
+a) a(a|b)*a
+b) ((ϵ|a)b*)*
+c) (a|b)*a(a|b)(a|b)
+d) a*ba*ba*ba*
+
+2. Escreva definições regulares para as seguintes linguagens:
+Todas as cadeias de letras minúsculas que contém as cinco vogais em ordem

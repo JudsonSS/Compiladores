@@ -1,0 +1,8 @@
+
+1. Divida o seguinte programa C++ em tokens:
+
+float limitedSquare(int x) {
+    // retorna x ao quadrado, limitado ao valor 100
+    return (x <= -10.0 || x >= 10.0) ? 100 : x*x;
+}
+
