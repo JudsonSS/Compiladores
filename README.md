@@ -16,21 +16,20 @@ Os laboratórios disponibilizados são referentes aos seguintes assuntos:
 09. Exercícios e Revisão 
 10. Análise Semântica
 11. Representação Intermediária
-12. Implementação do Tradutor
-13. Expressões Regulares
-14. Reconhecimento de Tokens
-15. Gerador de Analisador Léxico
-16. Exemplos de Uso do Flex
-17. Autômatos Finitos
-18. Geração de Analisadores Léxicos
-19. Exercícios e Revisão
-20. Gramáticas
-21. Transformação de Gramáticas
-22. Análise Descendente
-23. Analisador Preditivo
-24. Análise Ascendente
-25. Gerador de Analisador Sintático
-26. Exemplos de Uso do Bison
-28. Exercícios e Revisão
+12. Expressões Regulares
+13. Reconhecimento de Tokens
+14. Gerador de Analisador Léxico
+15. Exemplos de Uso do Flex
+16. Autômatos Finitos
+17. Geração de Analisadores Léxicos
+18. Exercícios e Revisão
+19. Gramáticas
+20. Transformação de Gramáticas
+21. Análise Descendente
+22. Analisador Preditivo
+23. Análise Ascendente
+24. Gerador de Analisador Sintático
+25. Exemplos de Uso do Bison
+26. Exercícios e Revisão
 
 Estou constantemente tentando melhorar o material do curso, portanto se tiverem sugestões de melhoria fiquem a vontade para contribuir.
