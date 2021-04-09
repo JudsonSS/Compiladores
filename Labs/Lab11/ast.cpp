@@ -330,19 +330,12 @@ While::While(Expression *e, Statement *s) :
     expr(e), 
     stmt(s) 
 {
-    // cria novos rótulos
-    before = NewLabel();
-    after = NewLabel();
+    
 }
 
 void While::Gen()
 {
-    cout << 'L' << before << ':' << endl;
-    Expression * n = Rvalue(expr);
-    cout << "\tifFalse " << n->ToString() << " goto L" << after << endl;
-    stmt->Gen();
-    cout << "\tgoto L" << before << endl;
-    cout << 'L' << after << ':' << endl;
+    
 }
 
 // --------

@@ -141,8 +141,6 @@ struct If : public Statement
 
 struct While : public Statement
 {
-    unsigned before;
-    unsigned after;
     Expression *expr;
     Statement *stmt;
     While(Expression *e, Statement *s);
