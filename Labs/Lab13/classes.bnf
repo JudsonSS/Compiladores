@@ -1,0 +1,17 @@
+(* 
+1. Escreva classes de caracteres para os seguintes conjuntos:
+a) As vogais minúsculas 
+b) As dez primeiras letras (até j) em maiúsculo ou minúsculo
+c) Os "dígitos" em um número hexadecimal 
+   (letras maiúsculas para os "dígitos" acima de 9)
+d) Os caracteres que podem aparecer no fim de uma sentença 
+   legítima em português (por exemplo, ponto de exclamação) 
+*)
+
+
+
+
+(* 
+2. Escreva uma definição regular para representar números no 
+   formato hexadecimal, iniciando com 0x (Ex.: 0x27FD01).
+*)
