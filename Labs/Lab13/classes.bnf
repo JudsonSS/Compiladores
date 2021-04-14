@@ -8,10 +8,17 @@ d) Os caracteres que podem aparecer no fim de uma sentença
    legítima em português (por exemplo, ponto de exclamação) 
 *)
 
-
+a) [aeiou]
+b) [a-jA-J]
+c) [0-9A-F]
+d) [.,!?:;]
 
 
 (* 
 2. Escreva uma definição regular para representar números no 
    formato hexadecimal, iniciando com 0x (Ex.: 0x27FD01).
 *)
+
+letras -> [a-fA-F]
+digitos -> [0-9]
+hexa -> (0x|0)?(letras|digitos)+
