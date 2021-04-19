@@ -8,7 +8,7 @@ using std::cout;
 
 %%
 [ \t\n]+                                            ; // ignora espaços em branco
-[+-]?(([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)  cout << "number\n";
+[+-]?(([0-9]+)|([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)  cout << "número\n";
 .+                                                  cout << "texto\n";
 %%
 

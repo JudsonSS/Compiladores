@@ -42,9 +42,9 @@ int main(int argc, char ** argv)
 
 	lexer.yylex();
 
-	cout << "Chars: " << charCount << "\n" 
-         << "Words: " << wordCount << "\n" 
-         << "Lines: " << lineCount << "\n";
+	cout << "Lines: " << lineCount << "\n"
+		 << "Words: " << wordCount << "\n"
+		 << "Chars: " << charCount << "\n";
 
 	fin.close();
 	return 0;
