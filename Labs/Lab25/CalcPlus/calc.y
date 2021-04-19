@@ -1,18 +1,32 @@
 %{
+// analisador sintático para uma calculadora
+// com suporte a definição de variáveis  
 #include <iostream>
-#include <cctype>
-#define YYSTYPE double   // tipo double para os atributos em yylval
+#include <string>
+#include <unordered_map>
 
-using std::cin;
+using std::string;
+using std::unordered_map;
 using std::cout;
 
+// protótipos das funções especiais
 int yylex(void);
 int yyparse(void);
 void yyerror(const char *);
 
+// tabela de símbolos 
+unordered_map<string,double> variables; 
 %}
 
-%token NUMBER
+%union {
+	double num;
+	char id[16];
+}
+
+%token <id> ID
+%token <num> NUM
+
+%type <num> expr
 
 %left '+' '-'
 %left '*' '/'
@@ -20,47 +34,40 @@ void yyerror(const char *);
 
 %%
 
-calc: calc expr '\n' 		{ cout << $2 << '\n'; } 
+math: math calc '\n'
 	| calc '\n'
-	| // vazio 
+	;
+
+calc: ID '=' expr 			{ variables[$1] = $3; } 	
+	| expr					{ cout << "= " << $1 << "\n"; }
 	; 
 
 expr: expr '+' expr			{ $$ = $1 + $3; }
 	| expr '-' expr   		{ $$ = $1 - $3; }
 	| expr '*' expr			{ $$ = $1 * $3; }
-	| expr '/' expr			{ $$ = $1 / $3; }
+	| expr '/' expr			
+	{ 
+		if ($3 == 0)
+			yyerror("divisão por zero");
+		else
+			$$ = $1 / $3; 
+	}
 	| '(' expr ')'			{ $$ = $2; }
 	| '-' expr %prec UMINUS { $$ = - $2; }
-	| NUMBER 
+	| ID					{ $$ = variables[$1]; }
+	| NUM
 	;
 
 %%
 
-int yylex() 
+int main()
 {
-	char ch;
-	// ignora espaços em branco
-	while ((ch=cin.get()) == ' ')
-		continue;
-
-	// se encontrar um número
-    if ((ch == '.') || isdigit(ch))
-	{
-		cin.unget();
-		cin >> yylval;
-		return NUMBER;
-	}
-
-	// qualquer outro caractere é um token
-	return ch;
+	yyparse();
 }
 
 void yyerror(const char * s)
 {
-   	cout << "ERRO: " << s << '\n';
-}
-
-int main()
-{
-	yyparse();
+	extern int yylineno;    // definido no analisador léxico
+	extern char * yytext;   // definido no analisador léxico 
+    cout << "Erro (" << s << "): símbolo \"" << yytext << "\" (linha " << yylineno << ")\n";
 }

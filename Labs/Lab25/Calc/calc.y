@@ -1,56 +1,67 @@
 %{
+// analisador sintático para uma calculadora básica 
 #include <iostream>
-#include <cctype>
-using namespace std;
+using std::cout;
 
 int yylex(void);
 int yyparse(void);
 void yyerror(const char *);
 
+/* cada letra do alfabeto é uma variável que pode receber um valor */
+double variables[26];
+
 %}
 
-%token DIGIT
+%union {
+	double num;
+	int ind;
+}
+
+%token <ind> VAR
+%token <num> NUM
+
+%type <num> expr
+
+%left '+' '-'
+%left '*' '/'
+%nonassoc UMINUS
 
 %%
 
-calc: 	expr '\n'		{ cout << $1 << endl; }
-	| 	calc expr '\n' 	{ cout << $2 << endl; }	
+math: math calc '\n'
+	| calc '\n'
 	;
 
-expr: 	expr '+' term	{ $$ = $1 + $3; }
-	| 	term
-	;
+calc: VAR '=' expr 			{ variables[$1] = $3; } 	
+	| expr					{ cout << "= " << $1 << "\n"; }
+	; 
 
-term:	term '*' fact	{ $$ = $1 * $3; }
-	|	fact
-	;
-
-fact:	'(' expr ')'	{ $$ = $2; }
-	|	DIGIT
+expr: expr '+' expr			{ $$ = $1 + $3; }
+	| expr '-' expr   		{ $$ = $1 - $3; }
+	| expr '*' expr			{ $$ = $1 * $3; }
+	| expr '/' expr			{ 
+								if ($3 == 0)
+									yyerror("divisão por zero");
+								else
+									$$ = $1 / $3; 
+							}
+	| '(' expr ')'			{ $$ = $2; }
+	| '-' expr %prec UMINUS { $$ = - $2; }
+	| VAR					{ $$ = variables[$1]; }
+	| NUM
 	;
 
 %%
-
-int yylex() 
-{
-	char ch;
-	ch = cin.get();
-
-    if (isdigit(ch))
-	{
-		yylval = ch - '0';
-		return DIGIT;
-	}
-
-	return ch;
-}
-
-void yyerror(const char * s)
-{
-   	cout << "ERRO: " << s << endl;
-}
 
 int main()
 {
 	yyparse();
 }
+
+void yyerror(const char * s)
+{
+	extern int yylineno;    // definido no analisador léxico
+	extern char * yytext;   // definifo no analisador léxico
+    cout << "Erro (" << s << "): símbolo \"" << yytext << "\" (linha " << yylineno << ")\n";
+}
+
