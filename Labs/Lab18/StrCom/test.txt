@@ -1,0 +1,3 @@
+"Oi Mundo"
+"Som\a Som\a Testando..."
+"\tUm\n\t\"Hacker\"\n\tEsteve aqui!\n"

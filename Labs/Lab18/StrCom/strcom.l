@@ -1,5 +1,5 @@
 %{
-// strings e comentários C++
+// strings e comentários em C++
 #include <iostream>
 using std::cout;
 %}
