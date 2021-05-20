@@ -1,0 +1,33 @@
+# Mostre os passos de reconhecimento do analisador shift-reduce,
+# indicando o handle em cada passo, para as seguintes entradas 
+# e gramáticas:
+
+S -> 0S1 
+   | 01
+
+i. 000111
+#Pilha   Entrada    Ação
+
+
+S -> SS+ 
+   | SS* 
+   | a
+
+i.   SSS+a*+
+#Pilha   Entrada    Ação
+
+
+S -> SS+ 
+   | SS* 
+   | a
+
+ii.  SS+a*a+
+#Pilha   Entrada    Ação
+
+
+S -> SS+ 
+   | SS* 
+   | a
+
+iii. aaa*a++
+#Pilha   Entrada    Ação
