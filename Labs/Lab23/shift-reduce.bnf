@@ -2,10 +2,20 @@
 # indicando o handle em cada passo, para as seguintes entradas 
 # e gramáticas:
 
+#1
 S -> 0S1 
    | 01
 
-i. 000111
+a) 000111
+#Pilha   Entrada    Ação
+
+
+#2
+S -> SS+ 
+   | SS* 
+   | a
+
+a) SSS+a*+
 #Pilha   Entrada    Ação
 
 
@@ -13,7 +23,7 @@ S -> SS+
    | SS* 
    | a
 
-i.   SSS+a*+
+b) SS+a*a+
 #Pilha   Entrada    Ação
 
 
@@ -21,13 +31,5 @@ S -> SS+
    | SS* 
    | a
 
-ii.  SS+a*a+
-#Pilha   Entrada    Ação
-
-
-S -> SS+ 
-   | SS* 
-   | a
-
-iii. aaa*a++
+c) aaa*a++
 #Pilha   Entrada    Ação
