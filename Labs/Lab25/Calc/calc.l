@@ -13,9 +13,9 @@ var     [a-z]
 %%
 
 [\t ]+		; // ignora espaço em branco
-{numero}    yylval.num = atof(yytext); return NUM;
-{var}		yylval.ind = yytext[0] - 'a'; return VAR;
-.|\n		return yytext[0];
+{numero}    { yylval.num = atof(yytext); return NUM; }
+{var}		{ yylval.ind = yytext[0] - 'a'; return VAR; }
+.|\n		{ return yytext[0]; }
 
 %%
 
