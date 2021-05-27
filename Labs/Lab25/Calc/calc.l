@@ -1,5 +1,5 @@
 %{ 
-// analisador léxico para uma calculadora básica 
+/* analisador léxico para uma calculadora básica */ 
 #include "calc.tab.h"
 extern double variables[26];
 %}
@@ -12,7 +12,7 @@ var     [a-z]
 
 %%
 
-[\t ]+		; // ignora espaço em branco
+[\t ]+		{ ; /* ignora espaços em branco */ }
 {numero}    { yylval.num = atof(yytext); return NUM; }
 {var}		{ yylval.ind = yytext[0] - 'a'; return VAR; }
 .|\n		{ return yytext[0]; }

@@ -1,5 +1,5 @@
 %{
-// analisador sintático para reconhecer frases em português 
+/* analisador sintático para reconhecer frases em português */
 #include <iostream>
 using std::cout;
 
@@ -30,11 +30,12 @@ objeto:	ARTIGO SUBSTANTIVO
 
 %%
 
-extern FILE * yyin;  // definido pelo analisador léxico
+/* definido pelo analisador léxico */
+extern FILE * yyin;  
 
 int main(int argc, char ** argv)
 {
-	// se foi passado um nome de arquivo
+	/* se foi passado um nome de arquivo */
 	if (argc > 1)
 	{
 		FILE * file;
@@ -45,7 +46,7 @@ int main(int argc, char ** argv)
 			exit(1);
 		}
 		
-		// entrada ajustada para ler do arquivo
+		/* entrada ajustada para ler do arquivo */
 		yyin = file;
 	}
 
@@ -54,7 +55,10 @@ int main(int argc, char ** argv)
 
 void yyerror(const char * s)
 {
-	extern int yylineno;    // definido pelo analisador léxico  
-	extern char * yytext;   // definido pelo analisador léxico
-	cout << "Erro sintático: símbolo \"" << yytext << "\" (linha " << yylineno << ")\n";
+	/* variáveis definidas no analisador léxico */
+	extern int yylineno;    
+	extern char * yytext;   
+
+	/* mensagem de erro exibe o símbolo que causou erro e o número da linha */
+    cout << "Erro sintático: símbolo \"" << yytext << "\" (linha " << yylineno << ")\n";
 }

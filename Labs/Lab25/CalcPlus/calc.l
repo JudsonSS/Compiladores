@@ -1,7 +1,6 @@
 %{ 
-// analisador léxico para uma calculadora 
-// com suporte a definição de variáveis 
-#include <string>
+/* analisador léxico para uma calculadora */
+/* com suporte a definição de variáveis */
 #include "parser.h"
 %}
 
