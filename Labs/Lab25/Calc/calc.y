@@ -1,5 +1,5 @@
 %{
-// analisador sintático para uma calculadora básica 
+/* analisador sintático para uma calculadora básica */
 #include <iostream>
 using std::cout;
 
@@ -7,9 +7,8 @@ int yylex(void);
 int yyparse(void);
 void yyerror(const char *);
 
-/* cada letra do alfabeto é uma variável que pode receber um valor */
+/* cada letra do alfabeto é uma variável */
 double variables[26];
-
 %}
 
 %union {
@@ -60,8 +59,11 @@ int main()
 
 void yyerror(const char * s)
 {
-	extern int yylineno;    // definido no analisador léxico
-	extern char * yytext;   // definifo no analisador léxico
+	/* variáveis definidas no analisador léxico */
+	extern int yylineno;    
+	extern char * yytext;   
+	
+	/* mensagem de erro exibe o símbolo que causou erro e o número da linha */
     cout << "Erro (" << s << "): símbolo \"" << yytext << "\" (linha " << yylineno << ")\n";
 }
 

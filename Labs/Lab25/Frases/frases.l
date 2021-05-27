@@ -1,5 +1,5 @@
 %{
-// analisador léxico para o reconhecedor de frases
+/* analisador léxico para o reconhecedor de frases */
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -8,13 +8,13 @@ using std::string;
 using std::unordered_map;
 
 #include "frases.tab.h"
-#define	CONSULTA 0   // padrão - buscar em vez de definir
+#define	CONSULTA 0   /* padrão - buscar em vez de definir */
 
-// tabela armazena a palavra e sua respectiva classificação
+/* tabela armazena a palavra e sua respectiva classificação */
 unordered_map<string,int> tabela;
 int estado;
 
-// funções de inserção e busca na tabela
+/* funções de inserção e busca na tabela */
 int inserir(int tipo, string palavra);
 int buscar(string palavra);
 
@@ -33,7 +33,7 @@ int buscar(string palavra);
 ^adv	estado = ADVERBIO; 
 
 [a-zA-Z]+  {
-		// palavra reconhecida, defina-a ou busque-a
+		/* palavra reconhecida, defina-a ou busque-a */
 	    if (estado != CONSULTA) 
 		{
 	     	inserir(estado, yytext);
@@ -53,36 +53,36 @@ int buscar(string palavra);
         }
     }
 
-.	; // ignore qualquer outra coisa
+.	; /* ignore qualquer outra coisa */
 
 %%
 
-// insere novos nomes na tabela
+/* insere novos nomes na tabela */
 int inserir(int tipo, string palavra)
 {
-	// se palavra já está na tabela
+	/* se palavra já está na tabela */
 	if (buscar(palavra) != 0) {
 		cout << "!!! atenção: " << palavra << " já definido\n";
 		return 0;
 	}
 	
-	// palavra ainda não está na tabela, vamos inserir
+	/* palavra ainda não está na tabela, vamos inserir */
 	tabela.insert({palavra, tipo});
 
-	return 1;	// tudo certo
+	return 1;	/* tudo certo */
 }
 
-// busca por um nome na tabela
+/* busca por um nome na tabela */
 int buscar(string word)
 {
-	// iterador aponta para o elemento ou tabela.end()
+	/* iterador aponta para o elemento ou tabela.end() */
 	auto pos = tabela.find(word);
 
-	// se elemento não for encontrado
+	/* se elemento não for encontrado */
 	if (pos == tabela.end()) 
 		return 0;
 
-	// elemento encontrado
+	/* elemento encontrado */
 	return pos->second;
 }
 

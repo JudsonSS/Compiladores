@@ -1,6 +1,6 @@
 %{
-// analisador sintático para uma calculadora
-// com suporte a definição de variáveis  
+/* analisador sintático para uma calculadora */
+/* com suporte a definição de variáveis */
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -9,13 +9,13 @@ using std::string;
 using std::unordered_map;
 using std::cout;
 
-// protótipos das funções especiais
+/* protótipos das funções especiais */
 int yylex(void);
 int yyparse(void);
 void yyerror(const char *);
 
-// tabela de símbolos 
-unordered_map<string,double> variables; 
+/* tabela de símbolos */
+unordered_map<string,double> variables;
 %}
 
 %union {
@@ -67,7 +67,10 @@ int main()
 
 void yyerror(const char * s)
 {
-	extern int yylineno;    // definido no analisador léxico
-	extern char * yytext;   // definido no analisador léxico 
+	/* variáveis definidas no analisador léxico */
+	extern int yylineno;    
+	extern char * yytext;   
+
+	/* mensagem de erro exibe o símbolo que causou erro e o número da linha */
     cout << "Erro (" << s << "): símbolo \"" << yytext << "\" (linha " << yylineno << ")\n";
 }
